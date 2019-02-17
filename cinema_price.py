@@ -1,7 +1,8 @@
 friday = {12: 250, 16: 350, 20: 450}
 champions = {10: 250, 13: 350, 16: 350}
 gang = {10: 350, 14: 450, 18: 450}
-
+movies = {"Пятница": friday, "Чемпионы": champions, "Пернатая банда": gang
+          }
 def day_discount(day):
     if day == "сегодня":
         return 0
@@ -19,27 +20,17 @@ def price(movie, tickets, day, time):
 
 movie = input("Выберите фильм: ")
 day = input("Выберите день (сегодня, завтра): ")
-time = int(input("Выберите время: "))
-tickets = int(input("Выберите количество билетов: "))
+time = input("Выберите время: ")
+tickets = input("Выберите количество билетов: ")
 
 if movie and day and time and tickets:
-    if day == "сегодня" or "завтра":
-        if movie == "Пятница":
-            if time in friday:
-                print("Фильм: Пятница", "День:", day, "Время:", time, "Количество билетов:", tickets)
-                print("Итого:", price(friday, tickets, day, time))
-            else:
-                print("На это время нет сеансов, попробуйте еще раз")
-        elif movie == "Чемпионы":
-            if time in champions:
-                print("Фильм: Чемпионы", "День:", day, "Время:", time, "Количество билетов:", tickets)
-                print("Итого:", price(champions, tickets, day, time))
-            else:
-                print("На это время нет сеансов, попробуйте еще раз")
-        elif movie == "Пернатая банда":
-            if time in gang:
-                print("Фильм: Пернатая банда", "День:", day, "Время:", time, "Количество билетов:", tickets)
-                print("Итого:", price(gang, tickets, day, time))
+    time = int(time)
+    tickets = int(tickets)
+    if day == "сегодня" or day == "завтра":
+        if movie in movies:
+            if time in movies[movie]:
+                print("Фильм:", movie, "День:", day, "Время:", time, "Количество билетов:", tickets)
+                print("Итого:", price(movies[movie], tickets, day, time))
             else:
                 print("На это время нет сеансов, попробуйте еще раз")
         else:
@@ -47,4 +38,4 @@ if movie and day and time and tickets:
     else:
         print("Неправильно указан день, попробуйте еще раз")
 else:
-    print("Один из параметров не выбран или выбран неправильно, попробуйте еще раз")
+    print("Некоторые параметры указаны неверно, попробуйте еще раз")

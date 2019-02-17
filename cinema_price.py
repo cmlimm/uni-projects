@@ -26,16 +26,16 @@ tickets = input("Выберите количество билетов: ")
 if movie and day and time and tickets:
     time = int(time)
     tickets = int(tickets)
-    if day == "сегодня" or day == "завтра":
-        if movie in movies:
+    if movie in movies:
+        if day == "сегодня" or day == "завтра":
             if time in movies[movie]:
                 print("Фильм:", movie, "День:", day, "Время:", time, "Количество билетов:", tickets)
                 print("Итого:", price(movies[movie], tickets, day, time))
             else:
                 print("На это время нет сеансов, попробуйте еще раз")
         else:
-            print("Такого фильма нет, попробуйте еще раз")
+            print("Неправильно указан день, попробуйте еще раз")
     else:
-        print("Неправильно указан день, попробуйте еще раз")
+        print("Такого фильма нет, попробуйте еще раз")
 else:
     print("Некоторые параметры не указаны, попробуйте еще раз")

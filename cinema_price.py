@@ -1,8 +1,8 @@
 friday = {12: 250, 16: 350, 20: 450}
 champions = {10: 250, 13: 350, 16: 350}
 gang = {10: 350, 14: 450, 18: 450}
-movies = {"Пятница": friday, "Чемпионы": champions, "Пернатая банда": gang
-          }
+movies = {"Пятница": friday, "Чемпионы": champions, "Пернатая банда": gang}
+
 def day_discount(day):
     if day == "сегодня":
         return 0

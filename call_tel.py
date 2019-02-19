@@ -9,5 +9,5 @@ def price(city, time):
         return time*11
 
 city = int(input("Введите код города: "))
-time = float(input("Введите длительность звонка в минутах: "))
+time = int(input("Введите длительность звонка в минутах: "))
 print("Стоимость звонка:", price(city, time), "рублей")

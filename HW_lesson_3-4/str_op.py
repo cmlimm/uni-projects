@@ -1,7 +1,7 @@
 s = "У лукоморья 123 дуб зеленый 456"
 
 if s.find('я') != -1:
-    print(s.index('я'))
+    print(s.find('я'))
     
 print((s.lower()).count('у'))
 

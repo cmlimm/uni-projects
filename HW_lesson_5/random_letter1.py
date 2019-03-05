@@ -7,9 +7,11 @@ letter = word[letterNumber]
 wordQuestion = word[:letterNumber] + '?' + word[letterNumber+1:]
 
 print(wordQuestion)
-guess = input('Введите букву: ')
-if guess == letter:
-    print('Победа!')
-else:
-    print('Увы! Попробуйте в другой раз.')
+while True:
+    guess = input('Введите букву: ')
+    if guess == letter:
+        print('Победа!')
+        break
+    else:
+        print('Увы! Попробуйте еще раз.')
 print('Слово: ' + word)

@@ -12,4 +12,4 @@ if guess == letter:
     print('Победа!')
 else:
     print('Увы! Попробуйте в другой раз.')
-print('Слово: '+word)
+print('Слово: ' + word)

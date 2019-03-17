@@ -1,6 +1,6 @@
 from random import randint
 
-numbers = [randint(-20, 20) for i in range(100)]
+numbers = [randint(-1000, 1000) for i in range(1000)]
 
 minimum = min(numbers)
 maximum = max(numbers)

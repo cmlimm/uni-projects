@@ -4,7 +4,7 @@ def writer(filename, numbers):
     '''
     import json    
     try:
-        with open(filename, 'w', encoding='utf-8') as f_obj:
+        with open(filename, 'w') as f_obj:
             json.dump(numbers, f_obj)
     except Exception as e:
         print(e)
@@ -15,7 +15,7 @@ def reader(filename):
     '''
     import json    
     try:
-        with open(filename, encoding='utf-8') as f_obj:
+        with open(filename) as f_obj:
             numbers = json.load(f_obj)
         return numbers
     except Exception as e:

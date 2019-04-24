@@ -24,7 +24,7 @@ def volume():
     Функция для подсчета объема
     """
     try:
-        result.set(round(pi*(radius.get()**3), 3))
+        result.set(round(4/3*pi*(radius.get()**3), 3))
         unconnected_radius.set(radius.get()) #данная переменная защищает от случайного сохранения радиуса, который был введен, но не посчитан
     except Exception as err:
         error(err)

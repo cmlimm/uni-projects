@@ -56,7 +56,7 @@ def look():
                 for word in list_of_words:
                     idx = '1.0'
                     while idx:
-                        idx = text.search(search_value.get(), idx,nocase=1, stopindex=tkinter.END)
+                        idx = text.search(search_value.get(), idx, nocase=1, stopindex=tkinter.END)
                         if idx:
                             lastidx = '%s+%dc' % (idx, len(search_value.get()))
                             text.tag_add('found', idx, lastidx)

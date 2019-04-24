@@ -66,7 +66,6 @@ def look():
                     error(err)
         text_to_show = ''.join(reader_txt())
         list_of_words = text_to_show.split()
-        print(list_of_words)
         look_window = tkinter.Toplevel()
         look_window.title('Просмотр результатов')
 

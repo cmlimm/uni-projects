@@ -20,9 +20,12 @@ def error(err):
     error_window.mainloop()
 
 def volume():
+    """
+    Функция для подсчета объема
+    """
     try:
         result.set(round(pi*(radius.get()**3), 3))
-        unconnected_radius.set(radius.get())
+        unconnected_radius.set(radius.get()) #данная переменна защищает от случайного сохранения радиуса, который был введен, но не посчитан
     except Exception as err:
         error(err)
 
@@ -30,6 +33,9 @@ def reader_txt():
     pass
 
 def writer_txt():
+    """
+    Запись в txt файл
+    """
     try:
         with open('volume_data.txt', 'a', encoding='utf-8') as file:
             text_to_add = 'Радиус: '+str(unconnected_radius.get())+' Объем: '+str(result.get())+'\n'
@@ -38,12 +44,19 @@ def writer_txt():
         error(err)
 
 def reader_html():
+    """
+    Чтение из html-файла
+    """
     with open('volume_data.html', 'r', encoding='utf-8') as file:
             lines = file.readlines()
     return lines       
 
 def writer_html():
-    reader_html()
+    """
+    Добавление результата в html файл, при этом считываются 
+    все уже существующие строки без последних трех, чтобы 
+    можно было добавить удобно новый результат
+    """
     try:
         text_to_add = ''.join(reader_html()[:-3])
         with open('volume_data.html', 'w', encoding='utf-8') as file:
@@ -54,6 +67,9 @@ def writer_html():
         error(err)
 
 def writer():
+    """
+    Функция для определения того, в какой файл записывать результат
+    """
     try:
         if where.get()!='HTML':
             writer_txt()

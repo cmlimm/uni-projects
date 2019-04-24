@@ -49,14 +49,8 @@ def writer_txt():
         error(err)
 
 def look():
-    """
-    Окно с просмотром результата
-    """
     try:
         def check():
-            """
-            Функция для поиска
-            """
             try:
                 text.tag_remove('found', '1.0', tkinter.END)
                 for word in list_of_words:
@@ -176,7 +170,7 @@ try:
     save_frame.grid(row=2, column=0)
 
     button_look = tkinter.Button(save_frame,
-                                 text='Результаты\nиз txt',
+                                 text='Просмотр txt',
                                  command=look)
     button_look.grid(row=0, column=0)
     
@@ -192,7 +186,7 @@ try:
 
     info = tkinter.StringVar()
     announcer = tkinter.Label(save_frame, textvariable=info)
-    announcer.grid(row=1, column=0)
+    announcer.grid(row=1, column=1)
     
     window.mainloop()
 except Exception as err:

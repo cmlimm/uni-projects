@@ -176,7 +176,7 @@ try:
     save_frame.grid(row=2, column=0)
 
     button_look = tkinter.Button(save_frame,
-                                 text='Результаты',
+                                 text='Результаты\nиз txt',
                                  command=look)
     button_look.grid(row=0, column=0)
     

@@ -31,7 +31,7 @@ def volume():
 
 def reader_txt():
     """
-    Чтение из html-файла
+    Чтение из txt-файла
     """
     with open('volume_data.txt', 'r', encoding='utf-8') as file:
             lines = file.readlines()
@@ -39,7 +39,7 @@ def reader_txt():
 
 def writer_txt():
     """
-    Запись в txt файл
+    Запись в txt-файл
     """
     try:
         with open('volume_data.txt', 'a', encoding='utf-8') as file:
@@ -49,8 +49,14 @@ def writer_txt():
         error(err)
 
 def look():
+    """
+    Окно просмотра результатов из txt-файла
+    """
     try:
         def check():
+            """
+            Функция для поиска
+            """
             try:
                 text.tag_remove('found', '1.0', tkinter.END)
                 for word in list_of_words:

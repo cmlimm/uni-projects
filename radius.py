@@ -25,7 +25,7 @@ def volume():
     """
     try:
         result.set(round(pi*(radius.get()**3), 3))
-        unconnected_radius.set(radius.get()) #данная переменна защищает от случайного сохранения радиуса, который был введен, но не посчитан
+        unconnected_radius.set(radius.get()) #данная переменная защищает от случайного сохранения радиуса, который был введен, но не посчитан
     except Exception as err:
         error(err)
 

@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import tkinter
 import json 
 
@@ -126,12 +127,21 @@ def show_task():
     try:
         count = 0
         temp_task = ''
+        filter_string = filter_text.get()
         for task in todoList:
             count += 1
-            temp_task = temp_task + str(count) + " задача\n"
-            for name in task:
-                temp_task = temp_task + '\t' + name + ': ' + task[name] + '\n'
+            if True in list(map(lambda x: filter_string in x, list(task.values()))):
+                temp_task = temp_task + str(count) + " задача\n"
+                for name in task:
+                    temp_task = temp_task + '\t' + name + ': ' + task[name] + '\n'
         list_task.set(temp_task)
+    except Exception as err:
+        error(err)
+
+def clear_filter():
+    try:
+        filter_text.set('')
+        show_task()
     except Exception as err:
         error(err)
 
@@ -211,10 +221,29 @@ try:
     """
     frame_right = tkinter.Frame(window, borderwidth=10)
     frame_right.grid(row=0, column=1, sticky=tkinter.N)
+
+    frame_filter = tkinter.Frame(frame_right)
+    frame_filter.grid(row=0, column=0)
+
+    button_filter = tkinter.Button(frame_filter,
+                                   text='Фильтр',
+                                   command=show_task)
+    button_filter.grid(row=0, column=0, sticky=tkinter.W, ipadx=20)
+
+    button_notfilter = tkinter.Button(frame_filter,
+                                   text='Убрать фильтр',
+                                   command=clear_filter)
+    button_notfilter.grid(row=2, column=0, sticky=tkinter.W, ipadx=20)
+
+    filter_text = tkinter.StringVar()
+    filter_text.set('')
+    entry_filter = tkinter.Entry(frame_filter,
+                                 textvariable=filter_text)
+    entry_filter.grid(row=0, column=1)
     
     list_task = tkinter.StringVar()
     printed_task = tkinter.Label(frame_right, textvariable=list_task, justify=tkinter.LEFT)
-    printed_task.grid(row=0, column=0)
+    printed_task.grid(row=1, column=0)
     show_task()
     window.mainloop()
 except Exception as err:

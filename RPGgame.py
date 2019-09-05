@@ -58,7 +58,7 @@ class Hero:
                 print(self.name + " пытается использовать " + good.name + " на " + target.name)
                 good.use(target)
             else:
-                print(target.name + "слишком далеко от" + good.name)
+                print(self.name + " слишком далеко от " + good.name)
         elif self.hp < 0:
             print(self.name + " мертв и не может использовать предметы")
         elif target.hp < 0:
@@ -88,7 +88,7 @@ class FlyingHero(Hero):
                 self.y = 0
                 self.hp -= 1
                 if self.hp > 0:
-                    print(self.name + " не рассчитал ускорение и получил 1 урон, его здоровье: " + self.hp +
+                    print(self.name + " не рассчитал ускорение и получил 1 урон, его здоровье: " + str(self.hp) +
                         "\nТеперь его координаты: " + str(self.x) + " " + str(self.y))
                 else:
                     print(self.name + " не рассчитал ускорение. Больше его с нами нет.")

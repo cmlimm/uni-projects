@@ -1,8 +1,9 @@
+import json 
+
 def writer(filename, numbers):
     '''
     Запись в json файл 
-    '''
-    import json    
+    '''   
     try:
         with open(filename, 'w') as f_obj:
             json.dump(numbers, f_obj)
@@ -12,8 +13,7 @@ def writer(filename, numbers):
 def reader(filename):
     '''
     Чтение содержимого json файла 
-    '''
-    import json    
+    '''   
     try:
         with open(filename) as f_obj:
             numbers = json.load(f_obj)

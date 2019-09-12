@@ -58,7 +58,7 @@ class Manager():
         print("Поступил работник " + worker.name)
         print()
 
-    #добавление необязательно нового клиента, просто регистрация визита
+    #регистрация визита клиента
     def add_customer(self, customer, worker):
         self.__history_of_customers.append(customer)
         print("Поступил клиент " +
@@ -88,7 +88,7 @@ class Manager():
     #получение общей стоимости работ с машиной клиента
     def get_total_cost(self, customer):
         return self.get_cost_of_parts(customer)+self.get_cost_of_service(customer)
-        
+
     #проведение оплаты (работнику сразу начисляется зп)
     def payment(self, customer):
         self.__income += self.get_total_cost(customer)
@@ -134,6 +134,7 @@ class Manager():
         print(list(map(lambda x: x.name, self.__history_of_customers)))
         print()
 
+    #сколько кому платить
     def show_payroll(self):
         print("Зарплатная ведомость:")
         print({person.name: person.earnings for person in self.__list_of_workers})

@@ -9,6 +9,7 @@ class Car():
         self.manufacturer = manufacturer
         self.model = model
         self.year = year
+        
         self.spare_parts = []
 
 class Customer():
@@ -37,7 +38,7 @@ class Worker():
         self.wage = None
         self.earnings = 0
         self.customer = None
-        
+
     #добавление запасной части
     def add_spare_part(self, part):
         self.customer.car.spare_parts.append(part)

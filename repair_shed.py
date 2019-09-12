@@ -108,7 +108,7 @@ class Manager():
         print()
 
     def show_customer_history(self, customer):
-        print("Список сотрудников, работавших с клиентом:")
+        print("Список сотрудников, работавших с клиентом " + customer.name +":")
         print(list(map(lambda x: x.name, customer.history_of_workers)))
         print()
 

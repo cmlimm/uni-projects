@@ -130,7 +130,7 @@ class Manager():
         print()
 
     def show_history_of_customers(self):
-        print("История посещений клиентов:")
+        print("История посещений нашего богом забытого сервиса:")
         print(list(map(lambda x: x.name, self.__history_of_customers)))
         print()
 

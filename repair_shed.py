@@ -9,7 +9,7 @@ class Car():
         self.manufacturer = manufacturer
         self.model = model
         self.year = year
-        
+
         self.spare_parts = []
 
 class Customer():
@@ -65,7 +65,7 @@ class Manager():
         self.__history_of_customers.append(customer)
         print("Поступил клиент " +
               customer.name)
-        print("тлф. " + customer.number + " адрес: " + customer.address)
+        print("тлф. " + customer.number + "\nадрес: " + customer.address)
         print("Марка машины: " + customer.car.manufacturer)
         print("Модель: " + customer.car.model)
         print("Год выпуска: " + customer.car.year)

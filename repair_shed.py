@@ -50,12 +50,14 @@ class Manager():
         self.__list_of_workers = []
         self.__history_of_customers = []
         self.__income = 0
+
     #добавление нового работника
     def add_worker(self, worker, wage):
         worker.wage = wage
         self.__list_of_workers.append(worker)
         print("Поступил работник " + worker.name)
         print()
+
     #добавление необязательно нового клиента, просто регистрация визита
     def add_customer(self, customer, worker):
         self.__history_of_customers.append(customer)
@@ -74,15 +76,19 @@ class Manager():
               " работает " +
               worker.name)
         print()
+
     #получение стоимости всех запасных частей для машины клиента
     def get_cost_of_parts(self, customer):
         return sum(list(map(lambda x: x.cost*x.quantity, customer.car.spare_parts)))
+
     #получение стоимости работы сотрудника с машиной клиента
     def get_cost_of_service(self, customer):
         return customer.worker.wage
+
     #получение общей стоимости работ с машиной клиента
     def get_total_cost(self, customer):
         return self.get_cost_of_parts(customer)+self.get_cost_of_service(customer)
+        
     #проведение оплаты (работнику сразу начисляется зп)
     def payment(self, customer):
         self.__income += self.get_total_cost(customer)

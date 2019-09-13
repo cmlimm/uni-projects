@@ -48,7 +48,8 @@ class Worker():
         print()
 
 class Manager():
-    def __init__(self):
+    def __init__(self, name):
+        self.__name = name
         self.__list_of_workers = []
         self.__history_of_customers = []
         self.__income = 0
@@ -57,13 +58,13 @@ class Manager():
     def add_worker(self, worker, wage):
         worker.wage = wage
         self.__list_of_workers.append(worker)
-        print("Поступил работник " + worker.name)
+        print("В компанию " + self.__name + " поступил работник " + worker.name)
         print()
 
     #регистрация визита клиента
     def add_customer(self, customer, worker):
         self.__history_of_customers.append(customer)
-        print("Поступил клиент " +
+        print("В сервис " + self.__name + " поступил клиент " +
               customer.name)
         print("тлф. " + customer.number + "\nадрес: " + customer.address)
         print("Марка машины: " + customer.car.manufacturer)
@@ -98,11 +99,11 @@ class Manager():
               customer.name +
               " оплатил ремонт в размере " +
               str(self.get_total_cost(customer)) +
-              " денег")
+              " денег в сервисе " + self.__name)
         customer.car.spare_parts = []
 
         customer.worker.earnings += self.get_cost_of_service(customer)
-        print("Работнику " +
+        print("Работнику компании " + self.__name + " " +
               customer.worker.name +
               " начислено " +
               str(self.get_cost_of_service(customer)) +
@@ -110,41 +111,43 @@ class Manager():
         print()
 
     def show_customer_history(self, customer):
-        print("Список сотрудников, работавших с клиентом " + customer.name +":")
+        print("Список сотрудников компании " + self.__name +
+              ", работавших с клиентом " + customer.name +":")
         print(list(map(lambda x: x.name, customer.history_of_workers)))
         print()
 
     def show_worker_earnings(self, worker):
-        print("На данный момент работник " +
+        print("На данный момент работник компании " + self.__name + " " +
               worker.name + " заработал " +
               str(worker.earnings) + " денег")
         print()
 
     def show_income(self):
-        print("Всего наша замечательная компания на данный момент заработала " +
+        print("Всего наша замечательная компания " + self.__name +
+              " на данный момент заработала " +
               str(self.__income) +
               " денег")
         print()
 
     def show_list_of_workers(self):
-        print("У нас работают:")
+        print("В автосервисе " + self.__name + " работают:")
         print(list(map(lambda x: x.name, self.__list_of_workers)))
         print()
 
     def show_history_of_customers(self):
-        print("История посещений нашего богом забытого сервиса:")
+        print("История посещений нашего богом забытого автосервиса " + self.__name + ":")
         print(list(map(lambda x: x.name, self.__history_of_customers)))
         print()
 
     #сколько кому платить
     def show_payroll(self):
-        print("Зарплатная ведомость:")
+        print("Зарплатная ведомость автосервиса " + self.__name + ":")
         print({person.name: person.earnings for person in self.__list_of_workers})
         print()
 
 markV = Car("Старк Индастриз", "Марк V", "2013")
 stark = Customer("Тони Старк", "Большая башня с буквой А", "8 (800) 555 35 35", markV)
-happy = Manager()
+happy = Manager("Мстители")
 peter = Worker("Питер")
 happy.add_worker(peter, 100)
 happy.add_customer(stark, peter)

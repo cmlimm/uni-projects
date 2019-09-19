@@ -22,7 +22,6 @@ class ClocksGUI:
         self.label_alarm.place(relx=0.5, rely=0.4, anchor=CENTER)
         self.label = Label(self.main_window, text="", font=("Times", 50))
         self.label.place(relx=0.5, rely=0.5, anchor=CENTER)
-        #self.main_window.title_font = tkfont.Font(family = "Times", size = 100, weight = "bold", slant = "italic")
 
         self.hours_button = Button(self.main_window, text="H", command=self.add_hour, height=2, width=3)
         self.hours_button.place(relx=0.4, rely=0.6, anchor=CENTER)

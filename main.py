@@ -40,7 +40,7 @@ class ClocksGUI:
         self.main_window.mainloop()
 
     def tick(self):
-        self.current_hour = (int(time.strftime("%I"))+ 12 + self.hour_counter)%24
+        self.current_hour = (int(time.strftime("%I")) + 12 + self.hour_counter)%24
         self.current_minute = (int(time.strftime("%M")) + self.minute_counter)%60
         self.current_second = int(time.strftime("%S"))
         self.current_time = time.strftime("%I:%M:%S")

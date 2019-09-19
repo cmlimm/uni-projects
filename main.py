@@ -2,7 +2,6 @@ from tkinter import font as tkfont
 from tkinter import *
 from tkinter import messagebox
 import time
-import datetime
 
 class ClocksGUI:
     def __init__(self):

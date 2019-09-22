@@ -106,6 +106,10 @@ class ClocksGUI:
 
     # Окно настройки будильника
     def alarm_gui(self):
+        # чтобы нельзя было создать несколько окон настройки будильника
+        self.alarm_button = Button(self.main_window, text="A", height=2, width=3)
+        self.alarm_button.place(relx=0.6, rely=0.6, anchor=CENTER)
+
         self.alarm_window = Tk()
         self.alarm_window.geometry("320x240")
         self.alarm_window.title("Alarm")
@@ -169,6 +173,12 @@ class ClocksGUI:
         self.alarm_hour = 0
         self.alarm_minute = 0
         self.change_chosen_alarm_label()
+
+        # восстановление функции создания окна настройки будильника
+        self.alarm_button = Button(self.main_window, text="A", \
+        command=self.alarm_gui, height=2, width=3)
+        self.alarm_button.place(relx=0.6, rely=0.6, anchor=CENTER)
+
         self.alarm_window.destroy()
 
 clocks = ClocksGUI()

@@ -2,6 +2,7 @@ from tkinter import font as tkfont
 from tkinter import *
 from tkinter import messagebox
 import time
+import pygame
 
 class ClocksGUI:
     # основное окно
@@ -42,6 +43,9 @@ class ClocksGUI:
         self.chosen_alarm_hour = 0
         self.chosen_alarm_minute = 0
 
+        pygame.init()
+        self.alarm_sound = pygame.mixer.Sound('alarm.ogg')
+
         self.tick()
         self.main_window.mainloop()
 
@@ -62,21 +66,26 @@ class ClocksGUI:
         if self.current_hour == self.chosen_alarm_hour and \
         self.current_minute == self.chosen_alarm_minute and \
         self.current_second == 0:
-            answer = messagebox.askyesno("Будильник", "Перенести на 10 минут?")
-            if answer == True:
-                if self.chosen_alarm_minute + 10 >= 60:
-                    self.chosen_alarm_hour = (self.chosen_alarm_hour + 1)%24
-                self.chosen_alarm_minute = (self.chosen_alarm_minute + 10)%60
-                self.change_chosen_alarm_label()
-                self.alarm_window.destroy()
-            else:
-                self.chosen_alarm_hour = 0
-                self.chosen_alarm_minute = 0
+            self.alarm()
 
         self.label.config(text=str(self.current_hour).zfill(2) + ":" + \
         str(self.current_minute).zfill(2) + ":" + \
         str(self.current_second).zfill(2))
         self.label.after(200, self.tick)
+
+    # функция для окна сработавшего будильника
+    def alarm(self):
+        self.alarm_sound.play()
+        answer = messagebox.askyesno("Будильник", "Перенести на 10 минут?")
+        if answer == True:
+            if self.chosen_alarm_minute + 10 >= 60:
+                self.chosen_alarm_hour = (self.chosen_alarm_hour + 1)%24
+            self.chosen_alarm_minute = (self.chosen_alarm_minute + 10)%60
+            self.change_chosen_alarm_label()
+        else:
+            self.chosen_alarm_hour = 0
+            self.chosen_alarm_minute = 0
+        self.alarm_sound.stop()
 
     # функции для изменения часов/минут, tick чтобы не было задержки при изменении
     def inc_hour(self):

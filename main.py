@@ -35,13 +35,16 @@ class ClocksGUI:
         command=self.alarm_gui, height=2, width=3)
         self.alarm_button.place(relx=0.6, rely=0.6, anchor=CENTER)
 
-        self.hour_counter = 0
-        self.minute_counter = 0
-        self.click_counter = 0
+        self.is_alarm_set = False
         self.alarm_hour = 0
         self.alarm_minute = 0
         self.chosen_alarm_hour = 0
         self.chosen_alarm_minute = 0
+
+        self.current_hour = int(time.strftime("%H"))
+        self.current_minute = int(time.strftime("%M"))
+        self.current_second = int(time.strftime("%S"))
+        self.current_time = time.strftime("%H:%M:%S")
 
         pygame.init()
         self.alarm_sound = pygame.mixer.Sound('alarm.ogg')
@@ -50,27 +53,56 @@ class ClocksGUI:
         self.main_window.mainloop()
 
 
+    # функции для изменения отображения времени часов
+    def change_clock_label(self):
+        self.label.config(text=str(self.current_hour).zfill(2) + ":" + \
+        str(self.current_minute).zfill(2) + ":" + \
+        str(self.current_second).zfill(2))
+
+    # функции для изменения часов/минут, tick чтобы не было задержки при изменении
+    def inc_hour(self):
+        self.current_hour = (self.current_hour + 1)%24
+        self.change_clock_label()
+        self.tick()
+
+    def inc_minute(self):
+        self.current_minute = (self.current_minute + 1)%60
+        self.change_clock_label()
+        self.tick()
+
+    def dec_hour(self):
+        self.current_hour = (self.current_hour - 1)%24
+        self.change_clock_label()
+        self.tick()
+
+    def dec_minute(self):
+        self.current_minute = (self.current_minute - 1)%60
+        self.change_clock_label()
+        self.tick()
+
     # Метод обновления времени
     #
     # Сразу после запуска приложения время такое же, как на компьютере
     # пользователя
     #
-    # Каждые 200 миллисекунд время обновляется
+    # Каждые 200 миллисекунд время пытается обновиться
     def tick(self):
-        self.current_hour = (int(time.strftime("%I")) + 12 + \
-        self.hour_counter)%24
-        self.current_minute = (int(time.strftime("%M")) + \
-        self.minute_counter)%60
-        self.current_second = int(time.strftime("%S"))
+        if self.current_time != time.strftime("%H:%M:%S"):
+            self.current_time = time.strftime("%H:%M:%S")
+            self.current_second = (self.current_second + 1)%60
+            if self.current_second == 0:
+                self.current_minute = (self.current_minute + 1)%60
+                if self.current_minute == 0:
+                    self.current_hour = (self.current_hour + 1)%24
 
-        if self.current_hour == self.chosen_alarm_hour and \
-        self.current_minute == self.chosen_alarm_minute and \
-        self.current_second == 0:
-            self.alarm()
+            # проверка на совпадение с временем будильника
+            if self.current_hour == self.chosen_alarm_hour and \
+            self.current_minute == self.chosen_alarm_minute \
+            and self.current_second == 0 and self.is_alarm_set:
+                self.alarm()
 
-        self.label.config(text=str(self.current_hour).zfill(2) + ":" + \
-        str(self.current_minute).zfill(2) + ":" + \
-        str(self.current_second).zfill(2))
+            self.change_clock_label()
+
         self.label.after(200, self.tick)
 
     # функция для окна сработавшего будильника
@@ -85,24 +117,9 @@ class ClocksGUI:
         else:
             self.chosen_alarm_hour = 0
             self.chosen_alarm_minute = 0
+            self.is_alarm_set = False
+            self.chosen_alarm_label.config(text='Будильник не установлен')
         self.alarm_sound.stop()
-
-    # функции для изменения часов/минут, tick чтобы не было задержки при изменении
-    def inc_hour(self):
-        self.hour_counter = (self.hour_counter + 1)%24
-        self.tick()
-
-    def inc_minute(self):
-        self.minute_counter = (self.minute_counter + 1)%60
-        self.tick()
-
-    def dec_hour(self):
-        self.hour_counter = (self.hour_counter - 1)%24
-        self.tick()
-
-    def dec_minute(self):
-        self.minute_counter = (self.minute_counter - 1)%60
-        self.tick()
 
     # Окно настройки будильника
     def alarm_gui(self):
@@ -172,6 +189,7 @@ class ClocksGUI:
         self.chosen_alarm_minute = self.alarm_minute
         self.alarm_hour = 0
         self.alarm_minute = 0
+        self.is_alarm_set = True
         self.change_chosen_alarm_label()
 
         # восстановление функции создания окна настройки будильника

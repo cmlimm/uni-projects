@@ -17,6 +17,7 @@ class ClocksGUI:
         self.label = Label(self.main_window, text="", font=("Times", 50))
         self.label.place(relx=0.5, rely=0.5, anchor=CENTER)
 
+        # кнопки уменьшения часов/минут
         self.dec_hours_button = Button(self.main_window, text="-H", \
         command=self.dec_hour, height=2, width=3)
         self.dec_hours_button.place(relx=0.4, rely=0.6, anchor=CENTER)
@@ -24,6 +25,7 @@ class ClocksGUI:
         command=self.dec_minute, height=2, width=3)
         self.dec_minutes_button.place(relx=0.5, rely=0.6, anchor=CENTER)
 
+        # кнопки увеличения часов/минут
         self.inc_hours_button = Button(self.main_window, text="+H", \
         command=self.inc_hour, height=2, width=3)
         self.inc_hours_button.place(relx=0.4, rely=0.7, anchor=CENTER)
@@ -31,13 +33,12 @@ class ClocksGUI:
         command=self.inc_minute, height=2, width=3)
         self.inc_minutes_button.place(relx=0.5, rely=0.7, anchor=CENTER)
 
+        # кнопка настройки будильника
         self.alarm_button = Button(self.main_window, text="A", \
         command=self.alarm_gui, height=2, width=3)
         self.alarm_button.place(relx=0.6, rely=0.6, anchor=CENTER)
 
         self.is_alarm_set = False
-        self.alarm_hour = 0
-        self.alarm_minute = 0
         self.chosen_alarm_hour = 0
         self.chosen_alarm_minute = 0
 
@@ -124,6 +125,7 @@ class ClocksGUI:
     # Окно настройки будильника
     def alarm_gui(self):
         # чтобы нельзя было создать несколько окон настройки будильника
+        # временно отключается функция кнопки настройки будильника
         self.alarm_button = Button(self.main_window, text="A", height=2, width=3)
         self.alarm_button.place(relx=0.6, rely=0.6, anchor=CENTER)
 
@@ -131,10 +133,14 @@ class ClocksGUI:
         self.alarm_window.geometry("320x240")
         self.alarm_window.title("Alarm")
 
+        self.alarm_hour = 0
+        self.alarm_minute = 0
+
         self.alarm_label = Label(self.alarm_window, \
         text="00:00", font=("Times", 50))
         self.alarm_label.place(relx=0.5, rely=0.4, anchor=CENTER)
 
+        # кнопки уменьшение часов/минут будильника
         self.alarm_dec_hours_button = Button(self.alarm_window, text="-H", \
         command=self.dec_alarm_hour, height=2, width=3)
         self.alarm_dec_hours_button.place(relx=0.4, rely=0.6, anchor=CENTER)
@@ -142,6 +148,7 @@ class ClocksGUI:
         command=self.dec_alarm_minute, height=2, width=3)
         self.alarm_dec_minutes_button.place(relx=0.5, rely=0.6, anchor=CENTER)
 
+        # кнопки увеличение часов/минут будильника
         self.alarm_inc_hours_button = Button(self.alarm_window, text="+H", \
         command=self.inc_alarm_hour, height=2, width=3)
         self.alarm_inc_hours_button.place(relx=0.4, rely=0.8, anchor=CENTER)
@@ -149,6 +156,7 @@ class ClocksGUI:
         command=self.inc_alarm_minute, height=2, width=3)
         self.alarm_inc_minutes_button.place(relx=0.5, rely=0.8, anchor=CENTER)
 
+        # кнопка установки будильника
         self.set_alarm_button = Button(self.alarm_window, text="S", \
         command=self.set_alarm, height=2, width=3)
         self.set_alarm_button.place(relx=0.6, rely=0.6, anchor=CENTER)
@@ -187,8 +195,6 @@ class ClocksGUI:
     def set_alarm(self):
         self.chosen_alarm_hour = self.alarm_hour
         self.chosen_alarm_minute = self.alarm_minute
-        self.alarm_hour = 0
-        self.alarm_minute = 0
         self.is_alarm_set = True
         self.change_chosen_alarm_label()
 

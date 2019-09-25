@@ -60,26 +60,22 @@ class ClocksGUI:
         str(self.current_minute).zfill(2) + ":" + \
         str(self.current_second).zfill(2))
 
-    # функции для изменения часов/минут, tick чтобы не было задержки при изменении
+    # функции для изменения часов/минут
     def inc_hour(self):
         self.current_hour = (self.current_hour + 1)%24
         self.change_clock_label()
-        self.tick()
 
     def inc_minute(self):
         self.current_minute = (self.current_minute + 1)%60
         self.change_clock_label()
-        self.tick()
 
     def dec_hour(self):
         self.current_hour = (self.current_hour - 1)%24
         self.change_clock_label()
-        self.tick()
 
     def dec_minute(self):
         self.current_minute = (self.current_minute - 1)%60
         self.change_clock_label()
-        self.tick()
 
     # Метод обновления времени
     #

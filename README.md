@@ -10,4 +10,4 @@
 
 Примерная схема работы приложения:
 
-![scheme](cmlimm.github.com/DigitalClock/scheme.png)
+![scheme](scheme.png)

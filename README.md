@@ -9,6 +9,4 @@ nltk.download(‘averaged_perceptron_tagger’) <br>
 nltk.download(‘stopwords’) <br>
 !pip install pymorphy2 <br>
 !pip install gensim <br>
-!pip install spacy <br>
-!python3 -m space download en <br>
 

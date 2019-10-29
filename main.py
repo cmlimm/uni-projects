@@ -36,7 +36,7 @@ def command_help(message):
 
 @bot.message_handler(regexp='Новая лента')
 def add_feed(message):
-    bot.send_message(message.chat.id, "Введите ссылку на ленту и её короткое название в следующем формате:\n [ссылка] [короткое название]")
+    bot.send_message(message.chat.id, "Введите ссылку на ленту и её короткое название в следующем формате:\n[ссылка] [короткое название]")
     global waiting_for_feed
     waiting_for_feed = True
 

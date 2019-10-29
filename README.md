@@ -1,6 +1,6 @@
-# telegram_RSS_feed
+# NEWS FOR YOU RSS
  Умное приложение для чтения новостей с сайтов
- 
+
  Требуемые библиотеки:
  * pyTelegramBotAPI
  * feedparser

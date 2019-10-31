@@ -14,3 +14,9 @@ Traceback (most recent call last):
 ValueError: invalid literal for int() with base 10: 'lll\n'
 31 Oct 23:22:05
 
+Traceback (most recent call last):
+  File "main.py", line 42, in sub
+    feed_date = test_feed.entries[0].published
+IndexError: list index out of range
+01 Nov 01:05:35
+

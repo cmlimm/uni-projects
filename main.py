@@ -1,15 +1,15 @@
-import telebot
 from parser import *
 from bot_exceptions import *
 from bot_utils import *
-from telebot import types
 from traceback import format_exc
 import time
-from apscheduler.schedulers.blocking import BlockingScheduler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 TOKEN = '972310320:AAFPLWK_5lOiNfanIQjGFgD20RM2dK98Mos'
 
-bot = telebot.TeleBot(TOKEN)
+updater = Updater(token=TOKEN, use_context=True)
+worker = updater.job_queue
+dispatcher = updater.dispatcher
 
 try:
     feeds = read_feeds_from_file('feeds')
@@ -18,10 +18,9 @@ try:
 except:
     add_to_log('log', format_exc())
 
-@bot.message_handler(commands=['start', 'help'])
-def command_help(message):
-    save_chat_id('chat_id', message.chat.id)
-    bot.reply_to(message, """Добрый день.
+def start(update, context):
+    save_chat_id('chat_id', update.effective_chat.id)
+    context.bot.send_message(chat_id=update.effective_chat.id, text="""Добрый день.
 Я могу:
 - Присылать новости из RSS-лент, которые мне укажут
 - Отбирать новости по ключевым словам
@@ -33,13 +32,12 @@ def command_help(message):
 /subs -- показать подписки
 /keywords -- показать ключевые слова""")
 
-@bot.message_handler(commands=['sub'])
-@bot.message_handler(regexp='/sub .+\.\S+ .+')
-def sub(message):
+def sub(update, context):
     try:
         global feeds
-        feed_link = message.text.split()[1]
-        feed_name = message.text.split()[2]
+        message = context.args
+        feed_link = message[0]
+        feed_name = message[1]
         test_feed = feedparser.parse(feed_link)
         feed_date = test_feed.entries[0].published
         if feed_name not in feeds.keys():
@@ -47,7 +45,8 @@ def sub(message):
                 if '::' not in feed_name and '::' not in feed_link:
                     feeds[feed_name] = {'link':feed_link, 'date':feed_date}
                     add_feed_to_file('feeds', feed_name, feed_link, feed_date)
-                    bot.send_message(message.chat.id, "Вы подписались на источник " + "'" + feed_name + "'")
+                    context.bot.send_message(chat_id=update.effective_chat.id, \
+                    text="Вы подписались на источник " + "'" + feed_name + "'")
                 else:
                     raise RestrictedSymbols
             else:
@@ -55,38 +54,42 @@ def sub(message):
         else:
             raise RepeatedFeedName
     except RepeatedFeedName:
-        bot.send_message(message.chat.id, 'Такое имя ленты уже существует')
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text='Такое имя ленты уже существует')
     except RepeatedFeedLink:
-        bot.send_message(message.chat.id, 'Такая лента уже существует')
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text='Такая лента уже существует')
     except RestrictedSymbols:
-        bot.send_message(message.chat.id, "Пожалуйста, не используйте :: в названии ленты или ссылке на ленту")
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Пожалуйста, не используйте :: в названии ленты или ссылке на ленту")
     except Exception as ex:
-        bot.send_message(message.chat.id, "Что-то пошло не так, проверьте корректность данных и попробуйте еще раз")
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Что-то пошло не так, проверьте корректность данных и попробуйте еще раз")
         add_to_log('log', format_exc())
 
-@bot.message_handler(commands=['addkeyword'])
-@bot.message_handler(regexp='/addkeyword \w+( \w+)*$')
-def new_keywords(message):
+def addkeywords(update, context):
     try:
         global keywords
-        new_keywords = list(set(message.text.split()[1:]))
+        message = context.args
+        new_keywords = list(set(message))
         added = []
         for word in new_keywords:
             if word not in keywords:
                 keywords.append(word)
                 added.append(word)
         add_keywords_to_file('keywords', added)
-        bot.send_message(message.chat.id, "Добавлены ключевые слова: " +', '.join(new_keywords))
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Добавлены ключевые слова: " +', '.join(new_keywords))
     except Exception as ex:
-        bot.send_message(message.chat.id, "Что-то пошло не так, попробуйте еще раз")
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
-@bot.message_handler(commands=['unsub'])
-@bot.message_handler(regexp='/unsub \w+( \w+)*$')
-def unsub(message):
+def unsub(update, context):
     try:
         global feeds
-        sources = list(set(message.text.split()[1:]))
+        message = context.args
+        sources = list(set(message))
         not_deleted = []
         deleted = []
         for source in sources:
@@ -96,18 +99,19 @@ def unsub(message):
             else:
                 not_deleted.append(source)
         bump_feeds_to_file('feeds', feeds)
-        bot.send_message(message.chat.id, "Вы отписались от следующих источников: " + \
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Вы отписались от следующих источников: " + \
         ', '.join(deleted) + '\n')
     except Exception as ex:
-        bot.send_message(message.chat.id, "Что-то пошло не так, попробуйте еще раз")
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
-@bot.message_handler(commands=['deletekeyword'])
-@bot.message_handler(regexp='/deletekeyword \w+( \w+)*$')
-def delete_keywords(message):
+def deletekeywords(update, context):
     try:
         global keywords
-        words = list(set(message.text.split()[1:]))
+        message = context.args
+        words = list(set(message))
         not_deleted = []
         deleted = []
         for word in words:
@@ -117,49 +121,74 @@ def delete_keywords(message):
             else:
                 not_deleted.append(word)
         bump_keywords_to_file('keywords', keywords)
-        bot.send_message(message.chat.id, "Удалены ключевые слова: " + \
-        ', '.join(deleted) + '\n')
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Удалены ключевые слова: " + ', '.join(deleted) + '\n')
     except Exception as ex:
-        bot.send_message(message.chat.id, "Что-то пошло не так, попробуйте еще раз")
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
-@bot.message_handler(commands=['subs'])
-def show_subs(message):
+def showsubs(update, context):
     try:
         global feeds
-        bot.send_message(message.chat.id, 'Подписки: ' + \
-        ', '.join([name for name in feeds.keys()]))
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text='Подписки: ' + ', '.join([name for name in feeds.keys()]))
     except Exception as ex:
-        bot.send_message(message.chat.id, "Что-то пошло не так, попробуйте еще раз")
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
-@bot.message_handler(commands=['keywords'])
-def show_keywords(message):
+def showkeywords(update, context):
     try:
         global feeds
-        bot.send_message(message.chat.id, 'Ключевые слова: ' + \
-        ', '.join(keywords))
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text='Ключевые слова: ' + ', '.join(keywords))
     except Exception as ex:
-        bot.send_message(message.chat.id, "Что-то пошло не так, попробуйте еще раз")
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
-@bot.message_handler(commands=['check'])
-def check_for_updates(message):
+def check_for_updates(context):
     global feeds
+    global chat_id
     news = []
     for feed in feeds.values():
         entries = feedparser.parse(feed['link']).entries
+        #раcкомментировать, когда надоест тестить
         #feed['date'] = entries[0].published
         n = 0
         new = entries[n]
         while new.published != feed['date']:
             news.append({'title': new.title, 'link':new.link})
-            bot.send_message(chat_id, new.title+'\n'+new.link+'\n\n')
+            context.bot.send_message(chat_id=chat_id, \
+            text=new.title+'\n'+new.link+'\n\n')
             n += 1
             new = entries[n]
 
-@bot.message_handler(func=lambda message: True)
-def delete_old_keywords(message):
-    bot.send_message(message.chat.id, "Кстати, я Пудж")
+def helpme(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, \
+    text="Кстати, я Пудж")
 
-bot.polling()
+start_handler = CommandHandler('start', start)
+help_handler = CommandHandler('help', start)
+sub_handler = CommandHandler('sub', sub)
+unsub_handler = CommandHandler('unsub', unsub)
+addkeywords_handler = CommandHandler('addkeywords', addkeywords)
+deletekeyword_handler = CommandHandler('deletekeywords', deletekeywords)
+showsubs_handler = CommandHandler('subs', showsubs)
+showkeywords_handler = CommandHandler('keywords', showkeywords)
+unknown_handler = MessageHandler(Filters.command, helpme)
+dispatcher.add_handler(start_handler)
+dispatcher.add_handler(help_handler)
+dispatcher.add_handler(sub_handler)
+dispatcher.add_handler(unsub_handler)
+dispatcher.add_handler(addkeywords_handler)
+dispatcher.add_handler(deletekeyword_handler)
+dispatcher.add_handler(showsubs_handler)
+dispatcher.add_handler(showkeywords_handler)
+dispatcher.add_handler(unknown_handler)
+
+refresher_ord = worker.run_repeating(check_for_updates, interval=20, first=0, context=chat_id)
+
+updater.start_polling()
+updater.idle()

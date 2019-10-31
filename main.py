@@ -143,11 +143,8 @@ def show_keywords(message):
         bot.send_message(message.chat.id, "Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
-@bot.message_handler(func=lambda message: True)
-def delete_old_keywords(message):
-    bot.send_message(message.chat.id, "Кстати, я Пудж")
-
-def check_for_updates():
+@bot.message_handler(commands=['check'])
+def check_for_updates(message):
     global feeds
     news = []
     for feed in feeds.values():
@@ -161,8 +158,8 @@ def check_for_updates():
             n += 1
             new = entries[n]
 
-scheduler = BlockingScheduler(timezone="Europe/Moscow")
-scheduler.add_job(check_for_updates, 'interval', seconds=20)
-scheduler.start()
+@bot.message_handler(func=lambda message: True)
+def delete_old_keywords(message):
+    bot.send_message(message.chat.id, "Кстати, я Пудж")
 
 bot.polling()

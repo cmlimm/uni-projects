@@ -5,6 +5,7 @@ from bot_utils import *
 from telebot import types
 from traceback import format_exc
 import time
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 TOKEN = '972310320:AAFPLWK_5lOiNfanIQjGFgD20RM2dK98Mos'
 
@@ -159,9 +160,9 @@ def check_for_updates():
             bot.send_message(chat_id, new.title+'\n'+new.link+'\n\n')
             n += 1
             new = entries[n]
-    time.sleep(10)
-    check_for_updates()
 
-check_for_updates()
+scheduler = BlockingScheduler(timezone="Europe/Moscow")
+scheduler.add_job(check_for_updates, 'interval', seconds=20)
+scheduler.start()
 
 bot.polling()

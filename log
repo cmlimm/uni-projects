@@ -1,4 +1,16 @@
 Traceback (most recent call last):
-  File "main.py", line 142, in show_keywords
-    ', '.join([keywords]))
-TypeError: sequence item 0: expected str instance, list found
+  File "main.py", line 16, in <module>
+    chat_id = load_chat_id('chat_id')
+  File "/Users/cmlimm/Documents/python/NFY-RSS/bot_utils.py", line 47, in load_chat_id
+    chat_id = int(file.read())
+ValueError: invalid literal for int() with base 10: 'lll\n'
+31 Oct 23:22:03
+
+Traceback (most recent call last):
+  File "main.py", line 16, in <module>
+    chat_id = load_chat_id('chat_id')
+  File "/Users/cmlimm/Documents/python/NFY-RSS/bot_utils.py", line 47, in load_chat_id
+    chat_id = int(file.read())
+ValueError: invalid literal for int() with base 10: 'lll\n'
+31 Oct 23:22:05
+

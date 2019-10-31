@@ -149,21 +149,26 @@ def showkeywords(update, context):
         add_to_log('log', format_exc())
 
 def check_for_updates(context):
-    global feeds
-    global chat_id
-    news = []
-    for feed in feeds.values():
-        entries = feedparser.parse(feed['link']).entries
-        #раcкомментировать, когда надоест тестить
-        #feed['date'] = entries[0].published
-        n = 0
-        new = entries[n]
-        while new.published != feed['date']:
-            news.append({'title': new.title, 'link':new.link})
-            context.bot.send_message(chat_id=chat_id, \
-            text=new.title+'\n'+new.link+'\n\n')
-            n += 1
+    try:
+        global feeds
+        global chat_id
+        news = []
+        for feed in feeds.values():
+            entries = feedparser.parse(feed['link']).entries
+            #раcкомментировать, когда надоест тестить
+            #feed['date'] = entries[0].published
+            n = 0
             new = entries[n]
+            while new.published != feed['date']:
+                news.append({'title': new.title, 'link':new.link})
+                context.bot.send_message(chat_id=chat_id, \
+                text=new.title+'\n'+new.link+'\n\n')
+                n += 1
+                new = entries[n]
+    except Exception as ex:
+        context.bot.send_message(chat_id=update.effective_chat.id, \
+        text="Ой...")
+        add_to_log('log', format_exc())
 
 def helpme(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, \

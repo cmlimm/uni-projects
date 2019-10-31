@@ -2,6 +2,6 @@
  Умное приложение для чтения новостей с сайтов
 
  Требуемые библиотеки:
- * pyTelegramBotAPI
+ * python-telegram-bot
  * feedparser
  * more to come soon

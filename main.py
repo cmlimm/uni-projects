@@ -1,8 +1,7 @@
-from parser import *
 from bot_exceptions import *
 from bot_utils import *
+from parser import *
 from traceback import format_exc
-import time
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 TOKEN = '972310320:AAFPLWK_5lOiNfanIQjGFgD20RM2dK98Mos'
@@ -21,11 +20,8 @@ except:
 def start(update, context):
     save_chat_id('chat_id', update.effective_chat.id)
     context.bot.send_message(chat_id=update.effective_chat.id, text="""Добрый день.
-Я могу:
-- Присылать новости из RSS-лент, которые мне укажут
-- Отбирать новости по ключевым словам
 Список команд:
-/sub [ссылка] [название ленты] -- подписаться на источник
+/sub [ссылка] [название ленты] [-s] -- подписаться на источник, используйте -s, если хотите получать текст новости
 /unsub [название ленты] -- отписаться от ленты
 /addkeywords [слово] [слово] [слово] -- добавить ключевые слова
 /deletekeyword [слово] [слово] [слово] -- удалить ключевые слова
@@ -38,13 +34,17 @@ def sub(update, context):
         message = context.args
         feed_link = message[0]
         feed_name = message[1]
+        if message[-1] == '-s':
+            feed_summary = True
+        else:
+            feed_summary = False
         test_feed = feedparser.parse(feed_link)
         feed_date = test_feed.entries[0].published
         if feed_name not in feeds.keys():
             if feed_link not in feeds.values():
                 if '::' not in feed_name and '::' not in feed_link:
-                    feeds[feed_name] = {'link':feed_link, 'date':feed_date}
-                    add_feed_to_file('feeds', feed_name, feed_link, feed_date)
+                    feeds[feed_name] = {'link':feed_link, 'date':feed_date, 'summary':feed_summary}
+                    add_feed_to_file('feeds', feed_name, feed_link, feed_date, feed_summary)
                     context.bot.send_message(chat_id=update.effective_chat.id, \
                     text="Вы подписались на источник " + "'" + feed_name + "'")
                 else:
@@ -148,6 +148,10 @@ def showkeywords(update, context):
         text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
+def helpme(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, \
+    text="Кстати, я Пудж")
+
 def check_for_updates(context):
     try:
         global feeds
@@ -158,21 +162,21 @@ def check_for_updates(context):
             #раcкомментировать, когда надоест тестить
             #feed['date'] = entries[0].published
             n = 0
-            new = entries[n]
-            while new.published != feed['date']:
-                news.append({'title': new.title, 'link':new.link})
+            article = entries[n]
+            while article.published != feed['date'] and n != len(entries):
+                text = ''
+                if feed['summary']:
+                    text = get_description(article)+'\n'
                 context.bot.send_message(chat_id=chat_id, \
-                text=new.title+'\n'+new.link+'\n\n')
+                text='<b>'+article.title+'</b>'+'\n'+text+article.link,\
+                parse_mode='HTML')
                 n += 1
-                new = entries[n]
+                article = entries[n]
+        bump_feeds_to_file('feeds', feeds)
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
         text="Ой...")
         add_to_log('log', format_exc())
-
-def helpme(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, \
-    text="Кстати, я Пудж")
 
 start_handler = CommandHandler('start', start)
 help_handler = CommandHandler('help', start)
@@ -182,7 +186,7 @@ addkeywords_handler = CommandHandler('addkeywords', addkeywords)
 deletekeyword_handler = CommandHandler('deletekeywords', deletekeywords)
 showsubs_handler = CommandHandler('subs', showsubs)
 showkeywords_handler = CommandHandler('keywords', showkeywords)
-unknown_handler = MessageHandler(Filters.command, helpme)
+unknown_handler = MessageHandler(Filters.all, helpme)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(help_handler)
 dispatcher.add_handler(sub_handler)
@@ -193,7 +197,7 @@ dispatcher.add_handler(showsubs_handler)
 dispatcher.add_handler(showkeywords_handler)
 dispatcher.add_handler(unknown_handler)
 
-refresher_ord = worker.run_repeating(check_for_updates, interval=20, first=0, context=chat_id)
+worker.run_repeating(check_for_updates, interval=20, first=0, context=chat_id)
 
 updater.start_polling()
 updater.idle()

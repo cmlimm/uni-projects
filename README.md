@@ -4,4 +4,5 @@
  Требуемые библиотеки:
  * python-telegram-bot
  * feedparser
+ * BeautifulSoup
  * more to come soon

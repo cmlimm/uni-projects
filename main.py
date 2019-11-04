@@ -32,18 +32,16 @@ def sub(update, context):
         global feeds
         message = context.args
         feed_link = message[0]
-        feed_name = message[1]
+        feed_name = ' '.join(message[1:])
         if message[-1] == '-s':
             feed_summary = True
+            feed_name = feed_name[:-3]
         else:
             feed_summary = False
 
         # проверка валидности ссылки
         test_feed = feedparser.parse(feed_link)
-        try:
-            feed_date = test_feed.entries[0].published
-        except:
-            feed_date = 'Not found'
+        feed_date = test_feed.entries[0].published
 
         # если такой ссылки и такого названия еще нет, то добавляем
         if feed_name not in feeds.keys():

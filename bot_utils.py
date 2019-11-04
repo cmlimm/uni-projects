@@ -1,11 +1,6 @@
 from datetime import datetime
 
-def add_feed_to_file(file_name, feed_name, feed_link, feed_date, feed_summary):
-    with open(file_name, 'a') as file:
-        file.write(feed_name + '::' + feed_link + '::' + \
-        feed_date + '::' + str(feed_summary) + '\n')
-
-def read_feeds_from_file(file_name):
+def read_feeds(file_name):
     feeds = {}
     with open(file_name, 'r') as file:
         for line in file.readlines():
@@ -17,28 +12,26 @@ def read_feeds_from_file(file_name):
             feeds[item[0]] = {'link':item[1], 'date':item[2], 'summary':summary}
     return feeds
 
-def add_keywords_to_file(file_name, keywords):
-    with open(file_name, 'a') as file:
-        for word in keywords:
-            file.write(word.lower()+'\n')
-
-def read_keywords_from_file(file_name):
-    keywords = []
+def read_keywords(file_name):
+    keywords = {}
     with open(file_name, 'r') as file:
-        for word in file.readlines():
-            keywords.append(word.strip())
+        for line in file.readlines():
+            temp = line.split('::')
+            feed = temp[0]
+            words = temp[1].split()
+            keywords[feed] = words
     return keywords
 
-def bump_feeds_to_file(file_name, feeds):
+def bump_feeds(file_name, feeds):
     with open(file_name, 'w') as file:
         for feed in feeds.keys():
             file.write(feed + '::' + feeds[feed]['link'] + '::' +\
             feeds[feed]['date'] + '::' + str(feeds[feed]['summary'])+'\n')
 
-def bump_keywords_to_file(file_name, keywords):
+def bump_keywords(file_name, keywords):
     with open(file_name, 'w') as file:
-        for word in keywords:
-            file.write(word + '\n')
+        for feed in keywords:
+            file.write(feed + '::' + ' '.join(keywords[feed])+'\n')
 
 def add_to_log(file_name, error):
     with open(file_name, 'a') as file:

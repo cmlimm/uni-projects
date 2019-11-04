@@ -9,18 +9,18 @@ worker = updater.job_queue
 dispatcher = updater.dispatcher
 
 try:
-    feeds = read_feeds_from_file('feeds')
-    keywords = read_keywords_from_file('keywords')
+    feeds = read_feeds('feeds')
+    keywords = read_keywords('keywords')
 except:
     add_to_log('log', format_exc())
 
 def start(update, context):
-    # save_chat_id('chat_id', update.effective_chat.id)
+    chat_id = update.effective_chat.id
     context.bot.send_message(chat_id=update.effective_chat.id, text="""Добрый день.
 Список команд:
-/sub [ссылка] [название ленты] [-s] -- подписаться на источник, используйте -s, если хотите получать текст новости
-/unsub [название ленты] -- отписаться от ленты
-/addkeywords [слово] [слово] [слово] -- добавить ключевые слова
+/sub [ссылка] [название источника] [-s] -- подписаться на источник, используйте -s, если хотите получать текст новости
+/unsub [название источника] -- отписаться от ленты
+/addkeywords [источник] [слово] [слово] [слово] -- добавить ключевые слова к источнику
 /deletekeyword [слово] [слово] [слово] -- удалить ключевые слова
 /subs -- показать подписки
 /keywords -- показать ключевые слова""")
@@ -41,7 +41,7 @@ def sub(update, context):
             if feed_link not in feeds.values():
                 if '::' not in feed_name and '::' not in feed_link:
                     feeds[feed_name] = {'link':feed_link, 'date':feed_date, 'summary':feed_summary}
-                    add_feed_to_file('feeds', feed_name, feed_link, feed_date, feed_summary)
+                    bump_feeds('feeds', feeds)
                     context.bot.send_message(chat_id=update.effective_chat.id, \
                     text='Вы подписались на источник {}'.format(feed_name))
                 else:
@@ -61,16 +61,22 @@ def sub(update, context):
 def addkeywords(update, context):
     try:
         global keywords
+        global feeds
         message = context.args
-        new_keywords = list(set(message))
-        added = []
-        for word in new_keywords:
-            if word not in keywords:
-                keywords.append(word)
-                added.append(word)
-        add_keywords_to_file('keywords', added)
-        context.bot.send_message(chat_id=update.effective_chat.id, \
-        text='Добавлены ключевые слова: {}'.format(', '.join(new_keywords)))
+        feed = message[0]
+        new_keywords = list(set(message[1:]))
+        if feed in feeds:
+            if feed not in keywords:
+                keywords[feed] = []
+            for word in new_keywords:
+                if word not in keywords[feed]:
+                    keywords[feed].append(word)
+            bump_keywords('keywords', keywords)
+            context.bot.send_message(chat_id=update.effective_chat.id, \
+            text='Добавлены ключевые слова к источнику {}: {}'.format(feed, ', '.join(new_keywords)))
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id, \
+            text='Такого источника нет')
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
         text="Что-то пошло не так, попробуйте еще раз")
@@ -81,17 +87,18 @@ def unsub(update, context):
         global feeds
         message = context.args
         sources = list(set(message))
-        not_deleted = []
         deleted = []
         for source in sources:
             if source in feeds.keys():
                 del feeds[source]
                 deleted.append(source)
-            else:
-                not_deleted.append(source)
-        bump_feeds_to_file('feeds', feeds)
-        context.bot.send_message(chat_id=update.effective_chat.id, \
-        text='Вы отписались от следующих источников: {}'.format(', '.join(deleted)))
+        if deleted != []:
+            bump_feeds('feeds', feeds)
+            context.bot.send_message(chat_id=update.effective_chat.id, \
+            text='Вы отписались от следующих источников: {}'.format(', '.join(deleted)))
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id, \
+            text='Таких источников нет')
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
         text="Что-то пошло не так, попробуйте еще раз")
@@ -100,19 +107,26 @@ def unsub(update, context):
 def deletekeywords(update, context):
     try:
         global keywords
+        global feeds
         message = context.args
-        words = list(set(message))
-        not_deleted = []
+        feed = message[0]
+        words = list(set(message[1:]))
         deleted = []
-        for word in words:
-            if word in keywords:
-                keywords.remove(word)
-                deleted.append(word)
+        if feed in feeds and feed in keywords:
+            for word in words:
+                if word in keywords[feed]:
+                    keywords[feed].remove(word)
+                    deleted.append(word)
+            if deleted != []:
+                bump_keywords('keywords', keywords)
+                context.bot.send_message(chat_id=update.effective_chat.id, \
+                text='Удалены ключевые слова: {}'.format(', '.join(deleted)))
             else:
-                not_deleted.append(word)
-        bump_keywords_to_file('keywords', keywords)
-        context.bot.send_message(chat_id=update.effective_chat.id, \
-        text='Удалены ключевые слова: {}'.format(', '.join(deleted)))
+                context.bot.send_message(chat_id=update.effective_chat.id, \
+                text='Таких ключевых слов нет')
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id, \
+            text='Такого источника нет или у такого источника нет ключевых слов')
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
         text="Что-то пошло не так, попробуйте еще раз")
@@ -122,7 +136,7 @@ def showsubs(update, context):
     try:
         global feeds
         context.bot.send_message(chat_id=update.effective_chat.id, \
-        text='Подписки: '.format(', '.join([name for name in feeds.keys()])))
+        text='Подписки: {}'.format(', '.join(list(feeds.keys()))))
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
         text="Что-то пошло не так, попробуйте еще раз")
@@ -130,9 +144,10 @@ def showsubs(update, context):
 
 def showkeywords(update, context):
     try:
-        global feeds
+        global keywords
+        show = '\n'.join(['{}: {}'.format(feed, ', '.join(keywords[feed])) for feed in keywords])
         context.bot.send_message(chat_id=update.effective_chat.id, \
-        text='Ключевые слова: '.format(', '.join(keywords)))
+        text='Ключевые слова: \n{}'.format(show))
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
         text="Что-то пошло не так, попробуйте еще раз")
@@ -147,7 +162,8 @@ def check_for_updates(context):
         global feeds
         global chat_id
         news = []
-        for feed in feeds.values():
+        for source in feeds:
+            feed = feeds[source]
             entries = feedparser.parse(feed['link']).entries
             #раcкомментировать, когда надоест тестить
             #feed['date'] = entries[0].published
@@ -156,13 +172,13 @@ def check_for_updates(context):
             while article.published != feed['date'] and n != len(entries):
                 text = ''
                 if feed['summary']:
-                    text = get_description(article)
+                    text = get_description(article, keywords[source])
                 context.bot.send_message(chat_id=chat_id, \
                 text='<b>{}</b>\n{}{}'.format(article.title, text, article.link),\
                 parse_mode='HTML')
                 n += 1
                 article = entries[n]
-        bump_feeds_to_file('feeds', feeds)
+        bump_feeds('feeds', feeds)
     except Exception as ex:
         context.bot.send_message(chat_id=chat_id, \
         text="Ой...")
@@ -188,7 +204,7 @@ dispatcher.add_handler(showsubs_handler)
 dispatcher.add_handler(showkeywords_handler)
 dispatcher.add_handler(unknown_handler)
 
-worker.run_repeating(check_for_updates, interval=20, first=0, context=chat_id)
+#worker.run_repeating(check_for_updates, interval=20, first=0, context=chat_id)
 
 updater.start_polling()
 updater.idle()

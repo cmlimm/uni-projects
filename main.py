@@ -181,11 +181,6 @@ def showkeywords(update, context):
         text="Что-то пошло не так, попробуйте еще раз"+'\n'+format_exc())
         add_to_log('log.log', format_exc())
 
-# ловит все, что не подходит под команды
-def helpme(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, \
-    text="Не понимаю, попробуйте еще раз")
-
 # проверка на наличие новостей
 def check_for_updates(context):
     try:
@@ -234,6 +229,11 @@ def check_for_updates(context):
         text="Ой..."+'\n'+format_exc())
         add_to_log('log.log', format_exc())
 
+# ловит все, что не подходит под команды
+def helpme(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, \
+    text="Не понимаю, попробуйте еще раз")
+
 start_handler = CommandHandler('start', start)
 help_handler = CommandHandler('help', start)
 sub_handler = CommandHandler('sub', sub)
@@ -257,7 +257,7 @@ dispatcher.add_handler(check_handler)
 dispatcher.add_handler(unknown_handler)
 
 # благодаря этой строчке проверяется наличие новостей каждые 3600 сек
-worker.run_repeating(check_for_updates, interval=1500, first=0, context=chat_id)
+worker.run_repeating(check_for_updates, interval=30, first=0, context=chat_id)
 
 updater.start_polling()
 updater.idle()

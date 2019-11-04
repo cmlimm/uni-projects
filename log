@@ -1,74 +1,32 @@
 Traceback (most recent call last):
-  File "main.py", line 16, in <module>
-    chat_id = load_chat_id('chat_id')
-  File "/Users/cmlimm/Documents/python/NFY-RSS/bot_utils.py", line 47, in load_chat_id
-    chat_id = int(file.read())
-ValueError: invalid literal for int() with base 10: 'lll\n'
-31 Oct 23:22:03
+  File "main.py", line 171, in check_for_updates
+    parse_mode='HTML')
+  File "/Users/cmlimm/anaconda3/lib/python3.7/site-packages/telegram/bot.py", line 66, in decorator
+    result = func(self, *args, **kwargs)
+  File "/Users/cmlimm/anaconda3/lib/python3.7/site-packages/telegram/bot.py", line 258, in send_message
+    timeout=timeout, **kwargs)
+  File "/Users/cmlimm/anaconda3/lib/python3.7/site-packages/telegram/bot.py", line 123, in _message
+    result = self._request.post(url, data, timeout=timeout)
+  File "/Users/cmlimm/anaconda3/lib/python3.7/site-packages/telegram/utils/request.py", line 327, in post
+    **urlopen_kwargs)
+  File "/Users/cmlimm/anaconda3/lib/python3.7/site-packages/telegram/utils/request.py", line 238, in _request_wrapper
+    raise BadRequest(message)
+telegram.error.BadRequest: Message is too long
+04 Nov 18:57:32
 
 Traceback (most recent call last):
-  File "main.py", line 16, in <module>
-    chat_id = load_chat_id('chat_id')
-  File "/Users/cmlimm/Documents/python/NFY-RSS/bot_utils.py", line 47, in load_chat_id
-    chat_id = int(file.read())
-ValueError: invalid literal for int() with base 10: 'lll\n'
-31 Oct 23:22:05
-
-Traceback (most recent call last):
-  File "main.py", line 42, in sub
-    feed_date = test_feed.entries[0].published
-IndexError: list index out of range
-01 Nov 01:05:35
-
-Traceback (most recent call last):
-  File "main.py", line 39, in sub
-    feed_link = message[0]
-IndexError: list index out of range
-01 Nov 19:39:35
-
-Traceback (most recent call last):
-  File "main.py", line 15, in <module>
-    feeds = read_feeds_from_file('feeds')
-  File "/Users/cmlimm/Documents/python/NFY-RSS/bot_utils.py", line 13, in read_feeds_from_file
-    feeds[item[0]] = {'link':item[1], 'date':item[2], 'summary':item[3].strip()}
-IndexError: list index out of range
-01 Nov 20:04:28
-
-Traceback (most recent call last):
-  File "main.py", line 15, in <module>
-    feeds = read_feeds_from_file('feeds')
-  File "/Users/cmlimm/Documents/python/NFY-RSS/bot_utils.py", line 13, in read_feeds_from_file
-    feeds[item[0]] = {'link':item[1], 'date':item[2], 'summary':item[3].strip()}
-IndexError: list index out of range
-01 Nov 20:05:49
-
-Traceback (most recent call last):
-  File "main.py", line 15, in <module>
-    feeds = read_feeds_from_file('feeds')
-  File "/Users/cmlimm/Documents/python/NFY-RSS/bot_utils.py", line 13, in read_feeds_from_file
-    feeds[item[0]] = {'link':item[1], 'date':item[2], 'summary':item[3].strip()}
-IndexError: list index out of range
-01 Nov 20:06:32
-
-Traceback (most recent call last):
-  File "main.py", line 51, in sub
-    add_feed_to_file('feeds', feed_name, feed_link, feed_date, feed_summary)
-  File "/Users/cmlimm/Documents/python/NFY-RSS/bot_utils.py", line 6, in add_feed_to_file
-    feed_date + '::' + feed_summary + '\n')
-TypeError: can only concatenate str (not "bool") to str
-01 Nov 20:07:23
-
-Traceback (most recent call last):
-  File "main.py", line 15, in <module>
-    feeds = read_feeds_from_file('feeds')
-  File "/Users/cmlimm/Documents/python/NFY-RSS/bot_utils.py", line 13, in read_feeds_from_file
-    feeds[item[0]] = {'link':item[1], 'date':item[2], 'summary':bool(item[3].strip())}
-IndexError: list index out of range
-01 Nov 20:08:54
-
-Traceback (most recent call last):
-  File "main.py", line 42, in sub
-    feed_date = test_feed.entries[0].published
-IndexError: list index out of range
-01 Nov 21:23:25
+  File "main.py", line 171, in check_for_updates
+    parse_mode='HTML')
+  File "/Users/cmlimm/anaconda3/lib/python3.7/site-packages/telegram/bot.py", line 66, in decorator
+    result = func(self, *args, **kwargs)
+  File "/Users/cmlimm/anaconda3/lib/python3.7/site-packages/telegram/bot.py", line 258, in send_message
+    timeout=timeout, **kwargs)
+  File "/Users/cmlimm/anaconda3/lib/python3.7/site-packages/telegram/bot.py", line 123, in _message
+    result = self._request.post(url, data, timeout=timeout)
+  File "/Users/cmlimm/anaconda3/lib/python3.7/site-packages/telegram/utils/request.py", line 327, in post
+    **urlopen_kwargs)
+  File "/Users/cmlimm/anaconda3/lib/python3.7/site-packages/telegram/utils/request.py", line 238, in _request_wrapper
+    raise BadRequest(message)
+telegram.error.BadRequest: Message is too long
+04 Nov 18:57:51
 

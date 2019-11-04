@@ -48,6 +48,7 @@ def sub(update, context):
             if feed_link not in feeds.values():
                 if '::' not in feed_name and '::' not in feed_link:
                     feeds[feed_name] = {'link':feed_link, 'date':feed_date, 'summary':feed_summary}
+                    keywords[feed_name] = []
                     bump_feeds('feeds', feeds)
                     context.bot.send_message(chat_id=update.effective_chat.id, \
                     text='Вы подписались на источник {}'.format(feed_name))

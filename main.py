@@ -194,7 +194,6 @@ def check_for_updates(context):
         for source in feeds:
             feed = feeds[source]
             ent = feedparser.parse(feed['link']).entries
-            n = 0
             context.bot.send_message(chat_id=chat_id, \
             text='СМОТРЮ НОВОСТИ НА '+source)
             context.bot.send_message(chat_id=chat_id, \
@@ -204,7 +203,8 @@ def check_for_updates(context):
             # иногда в валидных ссылках происходят какие-то ошибки
             # в результате которых по ним нет новостей, для этого проверка
             if len(ent) != 0:
-                article = ent[n]
+                n = 0
+                article = ent[0]
                 articles = []
 
                 # пока не дойдем до последней увиденной новости или
@@ -261,7 +261,7 @@ dispatcher.add_handler(check_handler)
 dispatcher.add_handler(unknown_handler)
 
 # благодаря этой строчке проверяется наличие новостей каждые 3600 сек
-worker.run_repeating(check_for_updates, interval=30, first=0, context=chat_id)
+worker.run_repeating(check_for_updates, interval=3600, first=0, context=chat_id)
 
 updater.start_polling()
 updater.idle()

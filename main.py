@@ -61,7 +61,7 @@ def sub(update, context):
             text='Такое название источника уже существует')
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
-        text="Что-то пошло не так, проверьте корректность данных и попробуйте еще раз")
+        text="Что-то пошло не так, проверьте корректность данных и попробуйте еще раз"+'\n'+format_exc())
         add_to_log('log.log', format_exc())
 
 # добавление новый ключевых слов к источникам
@@ -92,7 +92,7 @@ def addkeywords(update, context):
             text='Такого источника нет')
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
-        text="Что-то пошло не так, попробуйте еще раз")
+        text="Что-то пошло не так, попробуйте еще раз"+'\n'+format_exc())
         add_to_log('log.log', format_exc())
 
 # отписка
@@ -122,7 +122,7 @@ def unsub(update, context):
             text='Таких источников нет')
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
-        text="Что-то пошло не так, попробуйте еще раз")
+        text="Что-то пошло не так, попробуйте еще раз"+'\n'+format_exc())
         add_to_log('log.log', format_exc())
 
 # удаление ключевых слов у источника
@@ -153,7 +153,7 @@ def deletekeywords(update, context):
             text='Такого источника нет или у такого источника нет ключевых слов')
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
-        text="Что-то пошло не так, попробуйте еще раз")
+        text="Что-то пошло не так, попробуйте еще раз"+'\n'+format_exc())
         add_to_log('log.log', format_exc())
 
 # показать все подписки
@@ -164,7 +164,7 @@ def showsubs(update, context):
         text='Подписки: {}'.format(', '.join(list(feeds.keys()))))
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
-        text="Что-то пошло не так, попробуйте еще раз")
+        text="Что-то пошло не так, попробуйте еще раз"+'\n'+format_exc())
         add_to_log('log.log', format_exc())
 
 # показать все ключевые слова
@@ -176,7 +176,7 @@ def showkeywords(update, context):
         text='Ключевые слова: \n{}'.format(show))
     except Exception as ex:
         context.bot.send_message(chat_id=update.effective_chat.id, \
-        text="Что-то пошло не так, попробуйте еще раз")
+        text="Что-то пошло не так, попробуйте еще раз"+'\n'+format_exc())
         add_to_log('log.log', format_exc())
 
 # ловит все, что не подходит под команды
@@ -223,7 +223,7 @@ def check_for_updates(context):
         bump_feeds('feeds', feeds)
     except Exception as ex:
         context.bot.send_message(chat_id=chat_id, \
-        text="Ой...")
+        text="Ой..."+'\n'+format_exc())
         add_to_log('log.log', format_exc())
 
 start_handler = CommandHandler('start', start)

@@ -193,11 +193,15 @@ def check_for_updates(context):
         global keywords
         global chat_id
 
+        context.bot.send_message(chat_id=chat_id, \
+        text='ЗАПУСТИЛСЯ ПРОСМОТР НОВОСТЕЙ')
+
         for source in feeds:
             feed = feeds[source]
             ent = feedparser.parse(feed['link']).entries
             n = 0
-
+            context.bot.send_message(chat_id=chat_id, \
+            text='СМОТРЮ НОВОСТИ НА '+source)
             # иногда в валидных ссылках происходят какие-то ошибки
             # в результате которых по ним нет новостей, для этого проверка
             if len(ent) != 0:
@@ -210,6 +214,8 @@ def check_for_updates(context):
                     articles.append(article)
                     n += 1
                     article = ent[n]
+                    context.bot.send_message(chat_id=chat_id, \
+                    text='НАШОЛ '+article.title)
 
                 # в обратном порядке просматриваем новости
                 for article in articles[::-1]:

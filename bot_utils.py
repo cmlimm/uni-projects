@@ -36,12 +36,3 @@ def bump_keywords(file_name, keywords):
 def add_to_log(file_name, error):
     with open(file_name, 'a') as file:
         file.write(error+datetime.now().strftime("%d %b %H:%M:%S")+'\n\n')
-
-def save_chat_id(file_name, chat_id):
-    with open(file_name, 'w') as file:
-        file.write(str(chat_id))
-
-def load_chat_id(file_name):
-    with open(file_name, 'r') as file:
-        chat_id = int(file.read())
-    return chat_id

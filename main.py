@@ -3,6 +3,7 @@ from parser import *
 from config import *
 from traceback import format_exc
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import feedparser
 
 updater = Updater(token=TOKEN, use_context=True)
 worker = updater.job_queue
@@ -25,6 +26,7 @@ def start(update, context):
 /subs -- показать подписки
 /keywords -- показать ключевые слова""")
 
+# подписка на новый источник
 def sub(update, context):
     try:
         global feeds
@@ -35,8 +37,12 @@ def sub(update, context):
             feed_summary = True
         else:
             feed_summary = False
+
+        # проверка валидности ссылки
         test_feed = feedparser.parse(feed_link)
         feed_date = test_feed.entries[0].published
+
+        # если такой ссылки и такого названия еще нет, то добавляем
         if feed_name not in feeds.keys():
             if feed_link not in feeds.values():
                 if '::' not in feed_name and '::' not in feed_link:
@@ -58,6 +64,7 @@ def sub(update, context):
         text="Что-то пошло не так, проверьте корректность данных и попробуйте еще раз")
         add_to_log('log', format_exc())
 
+# добавление новый ключевых слов к источникам
 def addkeywords(update, context):
     try:
         global keywords
@@ -65,10 +72,16 @@ def addkeywords(update, context):
         message = context.args
         feed = message[0]
         new_keywords = list(set(message[1:]))
+
+        # проверка наличия источника
         if feed in feeds:
+
+            # если такого источника нет, то создаем
             if feed not in keywords:
                 keywords[feed] = []
             for word in new_keywords:
+
+                # повторяющиеся слова не добавляем
                 if word not in keywords[feed]:
                     keywords[feed].append(word)
             bump_keywords('keywords', keywords)
@@ -82,18 +95,26 @@ def addkeywords(update, context):
         text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
+# отписка
 def unsub(update, context):
     try:
         global feeds
+        global keywords
         message = context.args
         sources = list(set(message))
         deleted = []
+
         for source in sources:
             if source in feeds.keys():
+
+                # удаление как источника, так и его ключевых слов
                 del feeds[source]
+                del keywords[source]
                 deleted.append(source)
+
         if deleted != []:
             bump_feeds('feeds', feeds)
+            bump_keywords('keywords', keywords)
             context.bot.send_message(chat_id=update.effective_chat.id, \
             text='Вы отписались от следующих источников: {}'.format(', '.join(deleted)))
         else:
@@ -104,6 +125,7 @@ def unsub(update, context):
         text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
+# удаление ключевых слов у источника
 def deletekeywords(update, context):
     try:
         global keywords
@@ -112,6 +134,8 @@ def deletekeywords(update, context):
         feed = message[0]
         words = list(set(message[1:]))
         deleted = []
+
+        # если есть такой источник и у этого источника есть ключевые слова
         if feed in feeds and feed in keywords:
             for word in words:
                 if word in keywords[feed]:
@@ -120,10 +144,10 @@ def deletekeywords(update, context):
             if deleted != []:
                 bump_keywords('keywords', keywords)
                 context.bot.send_message(chat_id=update.effective_chat.id, \
-                text='Удалены ключевые слова: {}'.format(', '.join(deleted)))
+                text='Удалены ключевые слова в источнике {}: {}'.format(feed, ', '.join(deleted)))
             else:
                 context.bot.send_message(chat_id=update.effective_chat.id, \
-                text='Таких ключевых слов нет')
+                text='Таких ключевых слов в источнике {} нет'.format(feed))
         else:
             context.bot.send_message(chat_id=update.effective_chat.id, \
             text='Такого источника нет или у такого источника нет ключевых слов')
@@ -132,6 +156,7 @@ def deletekeywords(update, context):
         text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
+# показать все подписки
 def showsubs(update, context):
     try:
         global feeds
@@ -142,6 +167,7 @@ def showsubs(update, context):
         text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
+# показать все ключевые слова
 def showkeywords(update, context):
     try:
         global keywords
@@ -153,31 +179,47 @@ def showkeywords(update, context):
         text="Что-то пошло не так, попробуйте еще раз")
         add_to_log('log', format_exc())
 
+# ловит все, что не подходит под команды
 def helpme(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, \
-    text="Кстати, я Пудж")
+    text="Не понимаю, попробуйте еще раз")
 
+# проверка на наличие новостей
 def check_for_updates(context):
     try:
         global feeds
+        global keywords
         global chat_id
-        news = []
+
         for source in feeds:
             feed = feeds[source]
-            entries = feedparser.parse(feed['link']).entries
-            #раcкомментировать, когда надоест тестить
-            #feed['date'] = entries[0].published
+            ent = feedparser.parse(feed['link']).entries
             n = 0
-            article = entries[n]
-            while article.published != feed['date'] and n != len(entries):
-                text = ''
-                if feed['summary']:
-                    text = get_description(article, keywords[source])
-                context.bot.send_message(chat_id=chat_id, \
-                text='<b>{}</b>\n{}{}'.format(article.title, text, article.link),\
-                parse_mode='HTML')
-                n += 1
-                article = entries[n]
+
+            # иногда в валидных ссылках происходят какие-то ошибки
+            # в результате которых по ним нет новостей, для этого проверка
+            if len(ent) != 0:
+                article = ent[n]
+                articles = []
+
+                # пока не дойдем до последней увиденной новости или
+                # до конца списка новостей, собираем все не просмотренные новости
+                while article.published != feed['date'] and n != len(ent) - 1:
+                    articles.append(article)
+                    n += 1
+                    article = ent[n]
+
+                # в обратном порядке просматриваем новости
+                for article in articles[::-1]:
+                    text = get_description(article, feed, keywords[source])
+                    if text:
+                        context.bot.send_message(chat_id=chat_id, \
+                        text=text,\
+                        parse_mode='HTML')
+
+                #закомментировать когда захочется потестить
+                #эта строчка обновляет время последней новости у источника
+                feed['date'] = ent[0].published
         bump_feeds('feeds', feeds)
     except Exception as ex:
         context.bot.send_message(chat_id=chat_id, \
@@ -204,7 +246,8 @@ dispatcher.add_handler(showsubs_handler)
 dispatcher.add_handler(showkeywords_handler)
 dispatcher.add_handler(unknown_handler)
 
-#worker.run_repeating(check_for_updates, interval=20, first=0, context=chat_id)
+# благодаря этой строчке проверяется наличие новостей каждые 3600 сек
+worker.run_repeating(check_for_updates, interval=3600, first=0, context=chat_id)
 
 updater.start_polling()
 updater.idle()

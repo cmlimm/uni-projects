@@ -237,6 +237,7 @@ addkeywords_handler = CommandHandler('addkeywords', addkeywords)
 deletekeyword_handler = CommandHandler('deletekeywords', deletekeywords)
 showsubs_handler = CommandHandler('subs', showsubs)
 showkeywords_handler = CommandHandler('keywords', showkeywords)
+check_handler = CommandHandler('check', showkeywords)
 unknown_handler = MessageHandler(Filters.all, helpme)
 
 dispatcher.add_handler(start_handler)
@@ -247,6 +248,7 @@ dispatcher.add_handler(addkeywords_handler)
 dispatcher.add_handler(deletekeyword_handler)
 dispatcher.add_handler(showsubs_handler)
 dispatcher.add_handler(showkeywords_handler)
+dispatcher.add_handler(check_handler)
 dispatcher.add_handler(unknown_handler)
 
 # благодаря этой строчке проверяется наличие новостей каждые 3600 сек

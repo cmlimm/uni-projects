@@ -237,7 +237,7 @@ addkeywords_handler = CommandHandler('addkeywords', addkeywords)
 deletekeyword_handler = CommandHandler('deletekeywords', deletekeywords)
 showsubs_handler = CommandHandler('subs', showsubs)
 showkeywords_handler = CommandHandler('keywords', showkeywords)
-check_handler = CommandHandler('check', showkeywords)
+check_handler = CommandHandler('check', check_for_updates)
 unknown_handler = MessageHandler(Filters.all, helpme)
 
 dispatcher.add_handler(start_handler)

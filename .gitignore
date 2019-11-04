@@ -3,9 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-log
-chat_id
-rss.ipynb
+*.log
+*.ipynb
 
 # C extensions
 *.so

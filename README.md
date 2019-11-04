@@ -5,6 +5,6 @@
  * python-telegram-bot
  * feedparser
  * BeautifulSoup
- * nltk
+ * nltk (+ punkt)
  * langcodes
  * langdetect

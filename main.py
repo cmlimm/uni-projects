@@ -40,7 +40,10 @@ def sub(update, context):
 
         # проверка валидности ссылки
         test_feed = feedparser.parse(feed_link)
-        feed_date = test_feed.entries[0].published
+        try:
+            feed_date = test_feed.entries[0].published
+        except:
+            feed_date = 'Not found'
 
         # если такой ссылки и такого названия еще нет, то добавляем
         if feed_name not in feeds.keys():

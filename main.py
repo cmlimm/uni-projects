@@ -40,7 +40,6 @@ def sub(update, context):
         feed_name = message[1]
         if message[-1] == '-s':
             feed_summary = True
-            feed_name = feed_name[:-3]
         else:
             feed_summary = False
 

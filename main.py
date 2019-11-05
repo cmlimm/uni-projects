@@ -37,7 +37,7 @@ def sub(update, context):
 
         message = context.args
         feed_link = message[0]
-        feed_name = ' '.join(message[1:])
+        feed_name = message[1]
         if message[-1] == '-s':
             feed_summary = True
             feed_name = feed_name[:-3]

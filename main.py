@@ -33,6 +33,8 @@ def start(update, context):
 def sub(update, context):
     try:
         global feeds
+        global keywords
+
         message = context.args
         feed_link = message[0]
         feed_name = ' '.join(message[1:])
@@ -53,6 +55,7 @@ def sub(update, context):
                     feeds[feed_name] = {'link':feed_link, 'date':feed_date, 'summary':feed_summary}
                     keywords[feed_name] = []
                     bump_feeds('feeds', feeds)
+                    bump_keywords('keywords', keywords)
                     context.bot.send_message(chat_id=update.effective_chat.id, \
                     text='Вы подписались на источник {}'.format(feed_name))
                 else:

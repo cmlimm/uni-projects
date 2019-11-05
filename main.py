@@ -211,10 +211,10 @@ def check_for_updates(context):
                 # до конца списка новостей, собираем все не просмотренные новости
                 while article.published != feed['date'] and n != len(ent):
                     articles.append(article)
-                    n += 1
-                    article = ent[n]
                     context.bot.send_message(chat_id=chat_id, \
                     text='НАШОЛ '+article.title)
+                    n += 1
+                    article = ent[n]
 
                 # в обратном порядке просматриваем новости
                 for article in articles[::-1]:

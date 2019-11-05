@@ -182,7 +182,59 @@ def showkeywords(update, context):
         add_to_log('log.log', format_exc())
 
 # проверка на наличие новостей
-def check_for_updates(update, context):
+def check_for_updates(context):
+    try:
+        global feeds
+        global keywords
+        global chat_id
+
+        context.bot.send_message(chat_id=chat_id, \
+        text='ЗАПУСТИЛСЯ ПРОСМОТР НОВОСТЕЙ')
+
+        for source in feeds:
+            feed = feeds[source]
+            ent = feedparser.parse(feed['link']).entries
+            context.bot.send_message(chat_id=chat_id, \
+            text='СМОТРЮ НОВОСТИ НА '+source)
+            context.bot.send_message(chat_id=chat_id, \
+            text='ДЛИНА ЛЕНТЫ '+str(len(ent)))
+            context.bot.send_message(chat_id=chat_id, \
+            text='ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ '+feed['date'])
+            # иногда в валидных ссылках происходят какие-то ошибки
+            # в результате которых по ним нет новостей, для этого проверка
+            if len(ent) != 0:
+                n = 0
+                article = ent[0]
+                articles = []
+
+                # пока не дойдем до последней увиденной новости или
+                # до конца списка новостей, собираем все не просмотренные новости
+                while article.published != feed['date'] and n != len(ent):
+                    articles.append(article)
+                    context.bot.send_message(chat_id=chat_id, \
+                    text='НАШОЛ '+article.title)
+                    n += 1
+                    article = ent[n]
+
+                # в обратном порядке просматриваем новости
+                for article in articles[::-1]:
+                    text = get_description(article, feed, keywords[source])
+                    if text:
+                        context.bot.send_message(chat_id=chat_id, \
+                        text=text,\
+                        parse_mode='HTML')
+
+                #закомментировать когда захочется потестить
+                #эта строчка обновляет время последней новости у источника
+                feed['date'] = ent[0].published
+                bump_feeds('feeds', feeds)
+    except Exception as ex:
+        context.bot.send_message(chat_id=chat_id, \
+        text="Ой..."+'\n'+format_exc())
+        add_to_log('log.log', format_exc())
+
+# проверка на наличие новостей
+def check_for_updates_command(update, context):
     try:
         global feeds
         global keywords
@@ -246,7 +298,7 @@ addkeywords_handler = CommandHandler('addkeywords', addkeywords)
 deletekeyword_handler = CommandHandler('deletekeywords', deletekeywords)
 showsubs_handler = CommandHandler('subs', showsubs)
 showkeywords_handler = CommandHandler('keywords', showkeywords)
-check_handler = CommandHandler('check', check_for_updates)
+check_handler = CommandHandler('check', check_for_updates_command)
 unknown_handler = MessageHandler(Filters.all, helpme)
 
 dispatcher.add_handler(start_handler)

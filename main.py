@@ -117,7 +117,8 @@ def unsub(update, context):
 
                 # удаление как источника, так и его ключевых слов
                 del feeds[source]
-                del keywords[source]
+                if source in keywords:
+                    del keywords[source]
                 deleted.append(source)
 
         if deleted != []:

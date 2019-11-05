@@ -1,2 +1,2 @@
-chat_id = 45895570
-TOKEN = '972310320:AAFPLWK_5lOiNfanIQjGFgD20RM2dK98Mos'
+chat_id = 
+TOKEN = ''

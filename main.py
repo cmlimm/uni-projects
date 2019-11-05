@@ -208,7 +208,7 @@ def check_for_updates(context):
 
                 # пока не дойдем до последней увиденной новости или
                 # до конца списка новостей, собираем все не просмотренные новости
-                while article.published != feed['date'] and n != len(ent):
+                while article.published != feed['date'] and n != len(ent) - 1:
                     articles.append(article)
                     n += 1
                     article = ent[n]

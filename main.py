@@ -188,18 +188,10 @@ def check_for_updates(context):
         global keywords
         global chat_id
 
-        context.bot.send_message(chat_id=chat_id, \
-        text='ЗАПУСТИЛСЯ ПРОСМОТР НОВОСТЕЙ')
-
         for source in feeds:
             feed = feeds[source]
             ent = feedparser.parse(feed['link']).entries
-            context.bot.send_message(chat_id=chat_id, \
-            text='СМОТРЮ НОВОСТИ НА '+source)
-            context.bot.send_message(chat_id=chat_id, \
-            text='ДЛИНА ЛЕНТЫ '+str(len(ent)))
-            context.bot.send_message(chat_id=chat_id, \
-            text='ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ '+feed['date'])
+
             # иногда в валидных ссылках происходят какие-то ошибки
             # в результате которых по ним нет новостей, для этого проверка
             if len(ent) != 0:
@@ -211,8 +203,6 @@ def check_for_updates(context):
                 # до конца списка новостей, собираем все не просмотренные новости
                 while article.published != feed['date'] and n != len(ent):
                     articles.append(article)
-                    context.bot.send_message(chat_id=chat_id, \
-                    text='НАШОЛ '+article.title)
                     n += 1
                     article = ent[n]
 
@@ -233,25 +223,16 @@ def check_for_updates(context):
         text="Ой..."+'\n'+format_exc())
         add_to_log('log.log', format_exc())
 
-# проверка на наличие новостей
+# проверка на наличие новостей, но для команды
 def check_for_updates_command(update, context):
     try:
         global feeds
         global keywords
         global chat_id
 
-        context.bot.send_message(chat_id=chat_id, \
-        text='ЗАПУСТИЛСЯ ПРОСМОТР НОВОСТЕЙ')
-
         for source in feeds:
             feed = feeds[source]
             ent = feedparser.parse(feed['link']).entries
-            context.bot.send_message(chat_id=chat_id, \
-            text='СМОТРЮ НОВОСТИ НА '+source)
-            context.bot.send_message(chat_id=chat_id, \
-            text='ДЛИНА ЛЕНТЫ '+str(len(ent)))
-            context.bot.send_message(chat_id=chat_id, \
-            text='ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ '+feed['date'])
             # иногда в валидных ссылках происходят какие-то ошибки
             # в результате которых по ним нет новостей, для этого проверка
             if len(ent) != 0:
@@ -263,8 +244,6 @@ def check_for_updates_command(update, context):
                 # до конца списка новостей, собираем все не просмотренные новости
                 while article.published != feed['date'] and n != len(ent):
                     articles.append(article)
-                    context.bot.send_message(chat_id=chat_id, \
-                    text='НАШОЛ '+article.title)
                     n += 1
                     article = ent[n]
 

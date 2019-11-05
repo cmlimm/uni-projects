@@ -298,7 +298,7 @@ dispatcher.add_handler(check_handler)
 dispatcher.add_handler(unknown_handler)
 
 # благодаря этой строчке проверяется наличие новостей каждые 3600 сек
-worker.run_repeating(check_for_updates, interval=3600, first=0, context=chat_id)
+worker.run_repeating(check_for_updates, interval=20, first=0, context=chat_id)
 
 updater.start_polling()
 updater.idle()

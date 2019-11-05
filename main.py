@@ -182,7 +182,7 @@ def showkeywords(update, context):
         add_to_log('log.log', format_exc())
 
 # проверка на наличие новостей
-def check_for_updates(context):
+def check_for_updates(update, context):
     try:
         global feeds
         global keywords

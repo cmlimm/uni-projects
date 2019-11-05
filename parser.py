@@ -10,7 +10,7 @@ def get_description(article, feed, keywords):
     text = re.sub('\.(?=\w)', '.\1', BeautifulSoup(article.summary, 'html.parser').get_text())
 
     # если в новости есть ключевые слова
-    if find_keywords(article.title + text, keywords) or keywords == []:
+    if find_keywords(article.title + ' ' + text, keywords) or keywords == []:
 
         # если пользователь запрашивал текст новости у этого источника
         if feed['summary']:

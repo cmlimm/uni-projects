@@ -8,3 +8,5 @@
  * nltk (+ punkt)
  * langcodes
  * langdetect
+
+Запускать необходимо main.py

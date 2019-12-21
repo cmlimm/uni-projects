@@ -75,11 +75,10 @@ def one_student_stats(name):
 '''
 
 token = ""
-#Bot = commands.Bot(command_prefix = "!")
 
-client = discord.Client()
+'''client = discord.Client()
 
-list1 = ['Vladik','Kirill','Sasha','Katya','Maxim']
+
 
 @client.event
 async def on_ready():
@@ -114,7 +113,32 @@ async def on_message(message):
         await message.channel.send(one_student_stats('Сергей'))
     if message.content.startswith("!biba"):
         await message.channel.send("")
-#@Bot.command
-#async def foo(ctx):
-#    await ctx.send('Hello')
-client.run(token)
+    if message.content.startswith("!ping"):
+        await message.channel.send(f"Your ping ping is {round(client.latency * 1000)}ms")'''
+
+
+bot = commands.Bot(command_prefix = "!")
+
+@bot.event
+async def on_ready():
+    print("Bot is ready")
+
+@bot.command()
+async def hello(ctx):
+    await ctx.send("Hello")
+
+@bot.command()
+async def age(ctx):
+    await ctx.send(random.randint(5,80))
+
+@bot.command()
+async def ping(ctx):
+    await ctx.send(f"Your ping ping is {round(client.latency * 1000)}ms")
+
+@bot.command()
+async def whoispidor(ctx):
+    list1 = ['Владик','Кирюша','Саня','Катя','Максибон','Даня','Сергей']
+    await ctx.send(random.choice(list1))
+
+
+bot.run(token)

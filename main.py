@@ -114,24 +114,30 @@ async def on_message(message):
     if message.content.startswith("!biba"):
         await message.channel.send("")
     if message.content.startswith("!ping"):
-        await message.channel.send(f"Your ping pong is {round(client.latency * 1000)}ms")'''
+        await message.channel.send(f"Your ping ping is {round(client.latency * 1000)}ms")'''
 
 
 bot = commands.Bot(command_prefix = "!")
 
 @bot.event
 async def on_ready():
+    await bot.change_presence(activity=discord.Game("in PAPAGUCCI"))
     print("Bot is ready")
 
-@bot.command()
+@bot.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+@bot.command(name='hello')
 async def hello(ctx):
     await ctx.send("Hello")
 
-@bot.command()
+@bot.command(name = 'age', help='Give ur age!')
 async def age(ctx):
     await ctx.send(random.randint(5,80))
 
-@bot.command()
+@bot.command(name = 'ping', help = 'Give ur ping pong!')
 async def ping(ctx):
     await ctx.send(f"Your ping pong is {round(client.latency * 1000)}ms")
 
@@ -140,5 +146,8 @@ async def whoispidor(ctx):
     list1 = ['Владик','Кирюша','Саня','Катя','Максибон','Даня','Сергей']
     await ctx.send(random.choice(list1))
 
+@bot.command()
+async def clear(ctx, amount=15):
+    await ctx.channel.purge(limit=amount)
 
 bot.run(token)

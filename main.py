@@ -114,7 +114,7 @@ async def on_message(message):
     if message.content.startswith("!biba"):
         await message.channel.send("")
     if message.content.startswith("!ping"):
-        await message.channel.send(f"Your ping ping is {round(client.latency * 1000)}ms")'''
+        await message.channel.send(f"Your ping pong is {round(client.latency * 1000)}ms")'''
 
 
 bot = commands.Bot(command_prefix = "!")

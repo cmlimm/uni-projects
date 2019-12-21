@@ -133,7 +133,7 @@ async def age(ctx):
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send(f"Your ping ping is {round(client.latency * 1000)}ms")
+    await ctx.send(f"Your ping pong is {round(client.latency * 1000)}ms")
 
 @bot.command()
 async def whoispidor(ctx):

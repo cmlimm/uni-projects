@@ -5,10 +5,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
 import random
-
-'''
-Определяем баллы и меряем бибу
-'''
+from chlen import *
 
 url = 'http://www.rating.unecon.ru/index.php?&y=2018&f=1&up=12020&s=3&g=all&upp=all&ball=hide&sort=fio'
 brs_HTML = requests.get(url)
@@ -70,84 +67,58 @@ def one_student_stats(name):
         text += subjects[subjects_short[i]] + ': ' + str(participants_scores[full_name][i]) + '\n'
     return text[:-1]
 
+def show_subjects():
+    text = 'Предметы:\n'
+    for subject in subjects:
+        text += subject + ': ' + subjects[subject] + '\n'
+    return text[:-1]
+
+def show_participants():
+    text = 'Участники:\n'
+    for member in inverse_participants_nicknames:
+        text += member + ': ' + inverse_participants_nicknames[member] + '\n'
+    return text[:-1]
+
 '''
 Пишем бота
 '''
 
 token = ""
 
-'''client = discord.Client()
-
-
-
-@client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('!hello'):
-        await message.channel.send('Hello!')
-
-    if message.content.startswith("!whoispidor"):
-        await message.channel.send(random.choice(list1))
-
-    if message.content.startswith("!brs Саня"):
-        await message.channel.send(one_student_stats('Саня'))
-    if message.content.startswith("!brs Катя"):
-        await message.channel.send(one_student_stats('Катя'))
-    if message.content.startswith("!brs Кирюша"):
-        await message.channel.send(one_student_stats('Кирюша'))
-    if message.content.startswith("!brs Владик"):
-        await message.channel.send(one_student_stats('Владик'))
-    if message.content.startswith("!brs Максибон"):
-        await message.channel.send(one_student_stats('Максибон'))
-    if message.content.startswith("!brs Даня"):
-        await message.channel.send(one_student_stats('Даня'))
-    if message.content.startswith("!brs Кирилл"):
-        await message.channel.send(one_student_stats('Кирилл'))
-    if message.content.startswith("!brs Сергей"):
-        await message.channel.send(one_student_stats('Сергей'))
-    if message.content.startswith("!biba"):
-        await message.channel.send("")
-    if message.content.startswith("!ping"):
-        await message.channel.send(f"Your ping ping is {round(client.latency * 1000)}ms")'''
-
-
+client = discord.Client()
 bot = commands.Bot(command_prefix = "!")
 
-@bot.event
-async def on_ready():
-    await bot.change_presence(activity=discord.Game("in PAPAGUCCI"))
-    print("Bot is ready")
+@bot.command(name='brs', help='Показывает баллы БРС указанного человека, предмета или вообще все сразу')
+async def brs(ctx, name):
+    if name in inverse_participants_nicknames:
+        response = one_student_stats(name)
+    elif name in subjects_short or name in subjects_full:
+        response = one_subject_stats(name)
+    elif name == 'фул':
+        response = all_stats()
+    else:
+        response = 'Сори не понел'
+    await ctx.send(response)
 
-@bot.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+@bot.command(name='show', help='Показывает предметы или участников')
+async def show(ctx, param):
+    if param == 'участники':
+        response = show_participants()
+    elif param == 'предметы':
+        response = show_subjects()
+    elif param == 'хуй':
+        response = chlen_ascii
+    else:
+        response = 'Сори не понел'
+    await ctx.send(response)
 
-@bot.command(name='hello')
-async def hello(ctx):
-    await ctx.send("Hello")
+#след две команды почему-то не робят и вообще бот не запускается теперь лол
+@bot.command(name='pidor', help='Указывает на пидора')
+async def pidor(ctx):
+    await ctx.send(random.choice(participants))
 
-@bot.command(name = 'age', help='Give ur age!')
-async def age(ctx):
-    await ctx.send(random.randint(5,80))
-
-@bot.command(name = 'ping', help = 'Give ur ping pong!')
+@bot.command(name='ping', help='Возвращает пинг')
 async def ping(ctx):
-    await ctx.send(f"Your ping pong is {round(client.latency * 1000)}ms")
-
-@bot.command()
-async def whoispidor(ctx):
-    list1 = ['Владик','Кирюша','Саня','Катя','Максибон','Даня','Сергей']
-    await ctx.send(random.choice(list1))
-
-@bot.command()
-async def clear(ctx, amount=15):
-    await ctx.channel.purge(limit=amount)
+    await ctx.send(f'Пинг: {round(client.latency * 1000)}ms')
 
 bot.run(token)

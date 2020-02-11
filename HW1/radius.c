@@ -29,5 +29,5 @@ int main()
    printf("Периметр: %.2lf\n", perimeter(radius));
    printf("Диаметр: %.2lf\n", diameter(radius));
 
-   return 0;   /* indicate program ended successfully */
+   return 0;
 }

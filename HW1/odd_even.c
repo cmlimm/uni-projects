@@ -3,7 +3,7 @@
 int main()
 {
    int number;
-   /* initialization phase */
+
    number = 0;
 
    printf("Введите число: ");
@@ -14,5 +14,5 @@ int main()
    }
    else printf("Число %d - нечетное\n", number);
 
-   return 0;   /* indicate program ended successfully */
+   return 0;
 }

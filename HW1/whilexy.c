@@ -3,7 +3,7 @@
 int main()
 {
    int total, x, y, counter;
-   /* initialization phase */
+
    total = 1;
    x = 0;
    y = 0;
@@ -21,5 +21,5 @@ int main()
    }
    printf("%d в степени %d равно %d\n", x, y, total);
 
-   return 0;   /* indicate program ended successfully */
+   return 0;
 }

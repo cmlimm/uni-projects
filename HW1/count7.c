@@ -3,7 +3,7 @@
 int main()
 {
    int number, digit, dummy, counter;
-   /* initialization phase */
+
    number = 0;
    digit = 0;
    counter = 0;
@@ -23,5 +23,5 @@ int main()
 
    printf("В числе %d %d семерок\n", number, counter);
 
-   return 0;   /* indicate program ended successfully */
+   return 0;
 }

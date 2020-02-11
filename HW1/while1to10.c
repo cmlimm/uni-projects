@@ -3,7 +3,7 @@
 int main()
 {
    int total, counter;
-   /* initialization phase */
+
    total = 0;
    counter = 10;
 
@@ -13,5 +13,5 @@ int main()
    }
    printf("Сумма чисел от 1 до 10: %d\n", total);
 
-   return 0;   /* indicate program ended successfully */
+   return 0;
 }

@@ -3,7 +3,7 @@
 int main()
 {
    int number, first, second, fourth, fifth;
-   /* initialization phase */
+
    number = 0;
 
    printf("Введите число: ");
@@ -19,5 +19,5 @@ int main()
    }
    else printf("Число %d - не палиндром\n", number);
 
-   return 0;   /* indicate program ended successfully */
+   return 0;
 }

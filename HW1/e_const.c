@@ -31,5 +31,5 @@ int main()
 
    printf("Приближенное значение е: %lf\n", taylor(n));
 
-   return 0;   /* indicate program ended successfully */
+   return 0;
 }

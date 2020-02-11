@@ -2,10 +2,10 @@
 
 int main()
 {
-   double average;              /* new data type */
+   double average;
    int number, total;
    int i;
-   /* initialization phase */
+
    total = 0;
    number = 0;
 
@@ -18,5 +18,5 @@ int main()
    average = (double) total / 5;
    printf("Среднее: %.2f\n", average);
 
-   return 0;   /* indicate program ended successfully */
+   return 0;
 }

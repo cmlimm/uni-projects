@@ -20,5 +20,5 @@ int main()
 
    printf("Факториал числа %d: %ld\n", number, factorial(number, 1));
 
-   return 0;   /* indicate program ended successfully */
+   return 0;
 }

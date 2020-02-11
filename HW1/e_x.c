@@ -37,5 +37,5 @@ int main()
 
    printf("Приближенное значение е в степени %lf: %Lf\n", x, taylor(x, n));
 
-   return 0;   /* indicate program ended successfully */
+   return 0;
 }

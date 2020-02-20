@@ -1,25 +1,19 @@
 import random
-from math import sqrt
 from PIL import Image, ImageDraw #Подключим необходимые библиотеки
 
-image = Image.open("roof.jpg") #Открываем изображение
+image = Image.open("../bear.jpg") #Открываем изображение
 draw = ImageDraw.Draw(image) #Создаем инструмент для рисования
 width  = image.size[0] #Определяем ширину
 height = image.size[1] #Определяем высоту
 pix = image.load() #Выгружаем значения пикселей
-centre = (round(width/2), round(height/2))
-radius = height/4
-
-for x in range(width):
+for x in range(width)[:-1]:
         for y in range(height):
                 r = pix[x, y][0]
+                r_right = pix[x + 1, y][0]
                 g = pix[x, y][1]
+                g_right = pix[x + 1, y][1]
                 b = pix[x, y][2]
-                if sqrt((centre[0] - x)**2+(centre[1] - y)**2) <= radius:
-                    draw.point((x, y), (255, 128, 0))
-                elif (x // 36 % 2 == 0) and (y < height - height/4) and (y > height/4):
-                    draw.point((x, y), (0, 200, 0))
-                else:
-                    draw.point((x, y), (r, g, b))
+                b_right = pix[x + 1, y][2]
+                draw.point((x, y), (128 + 2*(r - r_right), 128 + 2*(g - g_right), 128 + 2*(b - b_right)))
 image.show()
 del draw

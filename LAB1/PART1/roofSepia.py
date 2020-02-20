@@ -1,7 +1,7 @@
 import random
 from PIL import Image, ImageDraw #Подключим необходимые библиотеки
 
-image = Image.open("bear.jpg") #Открываем изображение
+image = Image.open("../roof.jpg") #Открываем изображение
 draw = ImageDraw.Draw(image) #Создаем инструмент для рисования
 width  = image.size[0] #Определяем ширину
 height = image.size[1] #Определяем высоту
@@ -12,9 +12,6 @@ for x in range(width):
                 g = pix[x, y][1]
                 b = pix[x, y][2]
                 res = round((r + 6*g + 3*b)/10)
-                if res > 220:
-                    draw.point((x, y), (res, res, 0))
-                else:
-                    draw.point((x, y), (r, g, b))
+                draw.point((x, y), (res + 40, res + 20, res))
 image.show()
 del draw

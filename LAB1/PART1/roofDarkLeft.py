@@ -1,16 +1,16 @@
 import random
 from PIL import Image, ImageDraw #Подключим необходимые библиотеки
 
-image = Image.open("roof.jpg") #Открываем изображение
+image = Image.open("../roof.jpg") #Открываем изображение
 draw = ImageDraw.Draw(image) #Создаем инструмент для рисования
 width  = image.size[0] #Определяем ширину
 height = image.size[1] #Определяем высоту
 pix = image.load() #Выгружаем значения пикселей
 for x in range(width):
         for y in range(height):
-                a = pix[x, y][0]
-                b = pix[x, y][1]
-                c = pix[x, y][2]
-                draw.point((x, y), (255 - a, 255 - b, 255 - c))
+                r = round(pix[x, y][0]*x/width)
+                g = round(pix[x, y][1]*x/width)
+                b = round(pix[x, y][2]*x/width)
+                draw.point((x, y), (r, g, b))
 image.show()
 del draw

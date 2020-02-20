@@ -1,7 +1,7 @@
 import random
 from PIL import Image, ImageDraw #Подключим необходимые библиотеки
 
-image = Image.open("bear.jpg") #Открываем изображение
+image = Image.open("../bear.jpg") #Открываем изображение
 draw = ImageDraw.Draw(image) #Создаем инструмент для рисования
 width  = image.size[0] #Определяем ширину
 height = image.size[1] #Определяем высоту
@@ -11,6 +11,6 @@ for x in range(width):
                 a = pix[x, y][0]
                 b = pix[x, y][1]
                 c = pix[x, y][2]
-                draw.point((x, y), (255, 255, 0))
+                draw.point((x, y), (x, x, x))
 image.show()
 del draw

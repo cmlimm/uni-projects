@@ -1,11 +1,11 @@
 import random
-from PIL import Image, ImageDraw #Подключим необходимые библиотеки
+from PIL import Image, ImageDraw
 
-image = Image.open("../roof.jpg") #Открываем изображение
-draw = ImageDraw.Draw(image) #Создаем инструмент для рисования
-width  = image.size[0] #Определяем ширину
-height = image.size[1] #Определяем высоту
-pix = image.load() #Выгружаем значения пикселей
+image = Image.open("../roof.jpg")
+draw = ImageDraw.Draw(image)
+width  = image.size[0]
+height = image.size[1]
+pix = image.load()
 part = width // 3
 for x in range(0, part):
         for y in range(height):
@@ -28,5 +28,5 @@ for x in range(2*part, width):
                 b = pix[x, y][2]
                 res = round((r + 6*g + 3*b)/10)
                 draw.point((x, y), (0, res, 0))
-image.show()
+image.save("roof3Colors.jpg")
 del draw

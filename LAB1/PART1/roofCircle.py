@@ -1,12 +1,12 @@
 import random
 from math import sqrt
-from PIL import Image, ImageDraw #Подключим необходимые библиотеки
+from PIL import Image, ImageDraw
 
-image = Image.open("../roof.jpg") #Открываем изображение
-draw = ImageDraw.Draw(image) #Создаем инструмент для рисования
-width  = image.size[0] #Определяем ширину
-height = image.size[1] #Определяем высоту
-pix = image.load() #Выгружаем значения пикселей
+image = Image.open("../roof.jpg")
+draw = ImageDraw.Draw(image)
+width  = image.size[0]
+height = image.size[1]
+pix = image.load()
 centre = (round(width/2), round(height/2))
 radius = height/4
 
@@ -21,5 +21,5 @@ for x in range(width):
                     draw.point((x, y), (0, 200, 0))
                 else:
                     draw.point((x, y), (r, g, b))
-image.show()
+image.save("roofCircle.jpg")
 del draw

@@ -1,11 +1,11 @@
 import random
-from PIL import Image, ImageDraw #Подключим необходимые библиотеки
+from PIL import Image, ImageDraw
 
-image = Image.open("../roof.jpg") #Открываем изображение
-draw = ImageDraw.Draw(image) #Создаем инструмент для рисования
-width  = image.size[0] #Определяем ширину
-height = image.size[1] #Определяем высоту
-pix = image.load() #Выгружаем значения пикселей
+image = Image.open("../roof.jpg")
+draw = ImageDraw.Draw(image)
+width  = image.size[0]
+height = image.size[1]
+pix = image.load()
 
 gistRed = [0]*256
 gistGreen = [0]*256
@@ -51,5 +51,5 @@ for x in range(0, 255):
         for y in range(gistBlue[x]):
                 draw.point((round(width/2) + 2*x, height - y), (0, 0, 255))
                 draw.point((round(width/2) + 2*x + 1, height - y), (0, 0, 255))
-image.show()
+image.save("roof4Gist.jpg")
 del draw

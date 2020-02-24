@@ -1,5 +1,5 @@
 import random
-from PIL import Image, ImageDraw #Подключим необходимые библиотеки
+from PIL import Image, ImageDraw
 
 def auto_levels(x, a, b):
     if a < x < b:
@@ -7,11 +7,23 @@ def auto_levels(x, a, b):
     else:
         return x
 
-image = Image.open("../lego.jpg") #Открываем изображение
-draw = ImageDraw.Draw(image) #Создаем инструмент для рисования
-width  = image.size[0] #Определяем ширину
-height = image.size[1] #Определяем высоту
-pix = image.load() #Выгружаем значения пикселей
+def findMin(gist, min):
+    i = 0
+    while gist[i] <= min:
+        i += 1
+    return i
+
+def findMinReverse(gist, min):
+    i = 255
+    while gist[i] <= min:
+        i -= 1
+    return i
+
+image = Image.open("../lego.jpg")
+draw = ImageDraw.Draw(image)
+width  = image.size[0]
+height = image.size[1]
+pix = image.load()
 
 gistRed = [0]*256
 gistGreen = [0]*256
@@ -27,18 +39,15 @@ for x in range(width):
             gistGreen[g] += 1
             gistBlue[b] += 1
 
-ra = gistRed.index(1)
-rb = gistRed[::-1].index(1)
+min = 200
+ra = findMin(gistRed, min)
+rb = findMinReverse(gistRed, min)
 
-ga = gistGreen.index(1)
-gb = gistGreen[::-1].index(1)
+ga = findMin(gistGreen, min)
+gb = findMinReverse(gistGreen, min)
 
-ba = gistBlue.index(1)
-bb = gistBlue[::-1].index(1)
-
-print(gistRed)
-print(gistGreen)
-print(gistBlue)
+ba = findMin(gistGreen, min)
+bb = findMinReverse(gistGreen, min)
 
 for x in range(width):
         for y in range(height):
@@ -47,5 +56,5 @@ for x in range(width):
                 b = pix[x, y][2]
                 draw.point((x, y), (auto_levels(r, ra, rb), auto_levels(g, ga, gb), auto_levels(b, ba, bb)))
 
-image.show()
+image.save("legoAutoLevels.jpg")
 del draw

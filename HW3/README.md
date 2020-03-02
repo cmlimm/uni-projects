@@ -1,8 +1,3 @@
-## Практические задания
-
-<img src="https://raw.githubusercontent.com/dm-fedorov/c_basic/master/lessons/03/functions.jpg" height="300px" width="400px" >
-
-
 Напишите функцию distance, которая вычисляет расстояние между двумя точками с координатами (x1, y1) и (x2, y2).
 
 Напишите функцию gcd, которая возвращает наибольший общий делитель (НОД) двух целых чисел.

@@ -1,21 +1,35 @@
 #include <stdio.h>
 
+int gcd(int x, int y)
+{
+    int temp = 0;
+
+    while (x != y){
+        if (x > y){
+            temp = x;
+            x = y;
+            y = temp;
+        }
+        y = y - x;
+    }
+
+    return x;
+}
+
 int main()
 {
-        int total = 0;
-        int x, y, z, i;
+        int x, y;
+        int res;
 
-        for(i=100; i<1000; i++){
-            x = i % 10;
-            y = i / 10 % 10;
-            z = i / 100;
+        printf("Enter first number: ");
+        scanf("%d", &x);
 
-            if ((x == y) + (x == z) + (z == y) == 2){
-                total += 1;
-            }
-        }
+        printf("Enter second number: ");
+        scanf("%d", &y);
 
-        printf("Количество трехзначных чисел с двумя одинаковыми цифрам: %d\n", total);
+        res = x*y/gcd(x, y);
+
+        printf("LCM: %d\n", res);
 
         return 0;
 }

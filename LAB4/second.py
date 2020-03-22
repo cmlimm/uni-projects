@@ -75,7 +75,9 @@ def fractal(size, depth, turtle):
         turtle.rotate(-pi/6)
         fractal(size/2, depth - 1, turtle)
         turtle.rotate(pi/6)
-        turtle.move(-size)
+        turtle.move(-size/4)
+        turtle.move(-size/4)
+        turtle.move(-size/2)
 
 image = Image.open("roof_half.jpg") #Открываем изображение
 draw = ImageDraw.Draw(image) #Создаем инструмент для рисования

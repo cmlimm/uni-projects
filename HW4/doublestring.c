@@ -12,7 +12,9 @@ int len(char *str){
 char *double_string(char *str){
     int n = len(str);
     int i;
-    char *dbstr = malloc(n*2);
+    char *dbstr;
+
+    dbstr = malloc(n*2);
 
     for (i = 0; i < n; i++){
         dbstr[i] = str[i];
@@ -26,10 +28,14 @@ char *double_string(char *str){
 int main()
 {
     char str[40];
+    char *dbstr;
 
     scanf("%39s", str);
 
-    printf("Double string: %s\n", double_string(str));
+    dbstr = double_string(str);
+    printf("Double string: %s\n", dbstr);
+
+    free(double_string(str));
 
     return 0;
 }

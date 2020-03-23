@@ -28,11 +28,16 @@ int main()
 {
     char str1[40];
     char str2[40];
+    char *concat;
 
     scanf("%39s", str1);
     scanf("%39s", str2);
 
-    printf("Concatenated strings: %s\n", concat_string(str1, str2));
+    concat = concat_string(str1, str2);
+
+    printf("Concatenated strings: %s\n", concat);
+
+    free(concat);
 
     return 0;
 }

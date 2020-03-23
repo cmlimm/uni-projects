@@ -16,10 +16,10 @@ int main()
         double dist;
 
         printf("Enter coordinates of the first point: ");
-        scanf("%lf %lf" , &x_1, &y_1);
+        scanf("%lf %lf", &x_1, &y_1);
 
         printf("Enter coordinates of the first point: ");
-        scanf("%lf %lf" , &x_2, &y_2);
+        scanf("%lf %lf", &x_2, &y_2);
 
         dist = distance(x_1, y_1, x_2, y_2);
 

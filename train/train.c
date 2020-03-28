@@ -74,9 +74,10 @@ carriage *add_carriage(carriage *last){
 	return new;
 }
 
-void release(carriage *start){
+carriage *release(carriage *start){
 	carriage *i = start;
 	carriage *next = NULL;
+    carriage *prev = NULL;
     int k;
 
 	for ( ; i != NULL ; i = next){
@@ -86,10 +87,14 @@ void release(carriage *start){
         }
         free(i->number);
         free(i->isTreasureHere);
-        if (i->prev != NULL)
+        if (i->prev != NULL){
             i->prev->next = NULL;
+            prev = i->prev;
+        }
 		free(i);
 	}
+
+    return prev;
 }
 
 int main(){
@@ -98,27 +103,47 @@ int main(){
     carriage *new = NULL;
     char command;
     char *help;
+
     help = "Add carriage to the train (1)\n"
            "Show every carriage info (2)\n"
            "Destroy last carriage (3)\n"
-           "Exit and destroy train (4)\n";
+           "Destroy train (4)\n"
+           "Exit (5)\n";
 
     while (1){
         printf("%s", help);
         printf("Enter command number: ");
         scanf(" %c", &command);
+
+        //add carriage
         if (command == '1'){
             new = add_carriage(last);
             if (start == NULL)
                 start = new;
             last = new;
         }
+
+        //show every carriage info
         if (command == '2')
             display(start);
+
+        //destroy last carriage
         if (command == '3'){
-            release(last);
+            last = release(last);
+            if (last != NULL){
+                if (last->prev == NULL)
+                    start = NULL;
+            }
         }
+
+        //destroy train
         if (command == '4'){
+            last = release(start);
+            start = NULL;
+        }
+
+        //exit
+        if (command == '5'){
             release(start);
             break;
         }

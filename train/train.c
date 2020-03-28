@@ -8,6 +8,7 @@ typedef struct carriage {
     int n_passengers;
     char *passengers[MAX_passengers];
     char *isTreasureHere;
+    struct carriage * prev;
 	struct carriage * next;
 } carriage;
 
@@ -28,11 +29,11 @@ void display(carriage *start){
                 printf("%s\n", i->passengers[k]);
         }
         printf("Is Treasure in this carriage? ");
-        printf("%s\n", i->isTreasureHere);
+        printf("%s\n\n", i->isTreasureHere);
 	}
 }
 
-carriage *add_carriage(){
+carriage *add_carriage(carriage *last){
 	carriage *new = malloc(sizeof(carriage));
     int i, n;
     char name[30];
@@ -64,6 +65,12 @@ carriage *add_carriage(){
 
     new->next = NULL;
 
+    if (last != NULL){
+        last->next = new;
+        new->prev = last;
+    }
+    else new->prev = NULL;
+
 	return new;
 }
 
@@ -79,16 +86,46 @@ void release(carriage *start){
         }
         free(i->number);
         free(i->isTreasureHere);
+        if (i->prev != NULL)
+            i->prev->next = NULL;
 		free(i);
 	}
 }
 
 int main(){
 	carriage *start = NULL;
+    carriage *last = NULL;
+    carriage *new = NULL;
+    char command;
+    char *help;
+    help = "Add carriage to the train (1)\n"
+           "Show every carriage info (2)\n"
+           "Destroy last carriage (3)\n"
+           "Exit and destroy train (4)\n";
 
-	start = add_carriage();
-	display(start);
-	release(start);
+    while (1){
+        printf("%s", help);
+        printf("Enter command number: ");
+        scanf(" %c", &command);
+        if (command == '1'){
+            new = add_carriage(last);
+            if (start == NULL)
+                start = new;
+            last = new;
+        }
+        if (command == '2')
+            display(start);
+        if (command == '3'){
+            release(last);
+        }
+        if (command == '4'){
+            release(start);
+            break;
+        }
+        printf("\n");
+    }
+
+    printf("Train destroyed\n");
 
 return 0;
 

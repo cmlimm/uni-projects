@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "str_to_int.h"
 #define MAX_passengers 10
 
 /*
@@ -17,15 +18,36 @@ typedef struct carriage {
     char *name;
     int n_passengers;
     char *passengers[MAX_passengers];
-    char *isTreasureHere;
     struct carriage * prev;
 	struct carriage * next;
 } carriage;
 
 /*
+ * Function: print
+ * -----------------
+ * prints contents of one carriage
+ *
+ * crrg: carriage to print
+ *
+ * returns: nothing
+ */
+void print(carriage *crrg){
+    printf("Number of carriage: ");
+    printf("%s\n", crrg->name);
+
+    printf("Number of passengers: %d\nPassengers: ", crrg->n_passengers);
+    for (k = 0; k < crrg->n_passengers; k++){
+        if (k != crrg->n_passengers - 1)
+            printf("%s, ", crrg->passengers[k]);
+        else
+            printf("%s\n", crrg->passengers[k]);
+    }
+}
+
+/*
  * Function: display
  * -----------------
- * displays contents of doubly linked list of carriage elements
+ * prints contents of doubly linked list of carriage elements
  *
  * start: firslt element of linked list
  *
@@ -36,19 +58,7 @@ void display(carriage *start){
     int k;
 
 	for ( ; i != NULL; i=i->next){
-
-        printf("Number of carriage: ");
-        printf("%s\n", i->name);
-
-		printf("Number of passengers: %d\nPassengers: ", i->n_passengers);
-        for (k = 0; k < i->n_passengers; k++){
-            if (k != i->n_passengers - 1)
-                printf("%s, ", i->passengers[k]);
-            else
-                printf("%s\n", i->passengers[k]);
-        }
-        printf("Is Treasure in this carriage? ");
-        printf("%s\n\n", i->isTreasureHere);
+        print(i);
 	}
 }
 
@@ -64,9 +74,8 @@ void display(carriage *start){
 carriage *add_carriage(carriage *last){
 	carriage *new = malloc(sizeof(carriage));
     int i, n;
-    char passenger_name[30];
-    char isTreasureHere[4];
     char carriage_name[30];
+    char passenger_name[30];
 
     printf("Enter number of carriage: ");
     scanf("%29s", carriage_name);
@@ -93,12 +102,6 @@ carriage *add_carriage(carriage *last){
             strcpy(new->passengers[i], passenger_name);
         }
     }
-
-    printf("Is Treasure in this carriage? ");
-    scanf("%3s", isTreasureHere);
-    /* allocate memory for string */
-    new->isTreasureHere = malloc(strlen(isTreasureHere) + 1);
-    strcpy(new->isTreasureHere, isTreasureHere);
 
     /* as it is the last element of the linked list, there is no next element */
     new->next = NULL;
@@ -140,7 +143,7 @@ carriage *destroy(carriage *start){
             free(i->passengers[k]);
         }
         free(i->name);
-        free(i->isTreasureHere);
+
         /*
             if there is previous element then we are not removing an entire list,
             so we need to change link of the previous element to the next
@@ -156,18 +159,116 @@ carriage *destroy(carriage *start){
     return prev;
 }
 
+/*
+ * Function: find_name
+ * -----------------
+ * finds carriage with specified name
+ *
+ * start: first element of the list
+ * name: name to find
+ *
+ * returns: first carriage with specidied name
+ */
+carriage *find_name(carriage *start, char *name){
+    carriage *target = NULL;
+
+    for ( ; i != NULL ; i=i->next){
+        if (i->name == name){
+            target = i;
+            break;
+        }
+    }
+
+    return target;
+}
+
+/*
+ * Function: find_number
+ * -----------------
+ * finds carriage with specified number of passengers
+ *
+ * start: first element of the list
+ * number: number of passengers to find
+ *
+ * returns: first carriage with specidied number of passengers
+ */
+carriage *find_number(carriage *start, int number){
+    carriage *target = NULL;
+
+    for ( ; i != NULL ; i=i->next){
+        if (i->n_passengers == name){
+            target = i;
+            break;
+        }
+    }
+
+    return target;
+}
+
+/*
+ * Function: find_min
+ * -----------------
+ * finds carriage with minimum number of passengers
+ *
+ * start: first element of the list
+ *
+ * returns: first carriage with minimum number of passengers
+ */
+carriage *find_min(carriage *start){
+    carriage *target = NULL;
+    int min = MAX_passengers + 1;
+
+    for ( ; i != NULL ; i=i->next){
+        if (i->n_passengers < min){
+            target_min = i;
+            min = i->n_passengers;
+        }
+    }
+
+    return target;
+}
+
+/*
+ * Function: find_min
+ * -----------------
+ * finds carriage with maximum number of passengers
+ *
+ * start: first element of the list
+ *
+ * returns: first carriage with maximum number of passengers
+ */
+carriage *find_max(carriage *start){
+    carriage *target = NULL;
+    int max = -1;
+
+    for ( ; i != NULL ; i=i->next){
+        if (i->n_passengers > max){
+            target_max = i;
+            max = i->n_passengers;
+        }
+    }
+
+    return target
+}
+
 int main(){
 	carriage *start = NULL;
     carriage *last = NULL;
     carriage *new = NULL;
+    carriage *target = NULL;
     char command;
+    char sub_command;
+    char name[30];
     char *help;
+    int number;
 
     help = "Add carriage to the train (1)\n"
            "Show every carriage info (2)\n"
            "Destroy last carriage (3)\n"
            "Destroy train (4)\n"
-           "Exit (5)\n";
+           "Find carriage by name (5)\n"
+           "Find carriage by number of passengers (6)\n"
+           "Exit (7)\n";
 
     while (1){
         printf("%s", help);
@@ -175,19 +276,21 @@ int main(){
         scanf(" %c", &command);
         printf("\n");
 
-        //add carriage
+        /* add carriage */
         if (command == '1'){
+            printf("Add carriage to the end of the train (1)\n"
+                   "Add carriage after carriage with specified name (2)\n")
             new = add_carriage(last);
             if (start == NULL)
                 start = new;
             last = new;
         }
 
-        //show every carriage info
+        /* show every carriage info */
         if (command == '2')
             display(start);
 
-        //destroy last carriage
+        /* destroy last carriage */
         if (command == '3'){
             last = destroy(last);
             if (last != NULL){
@@ -196,14 +299,46 @@ int main(){
             }
         }
 
-        //destroy train
+        /* destroy train */
         if (command == '4'){
             last = destroy(start);
             start = NULL;
         }
 
-        //exit
+        /* find carriage by name */
         if (command == '5'){
+            printf("Enter name: ");
+            scanf("%29s", name);
+            target = find_name(start, name);
+            print(target);
+        }
+
+        /* find carriage by number of passengers */
+        if (command == '6'){
+            printf("Find carriage with:\n"
+                   "\tmaximum number of passengers (1)\n"
+                   "\tminimum number of passengers (2)\n"
+                   "\tspecific number of passengers (3)\n")
+            scanf(" %c", sub_command);
+
+            if (sub_command == '1')
+                target = find_max(start);
+            if (sub_command == '2')
+                target = find_min(start);
+            if (sub_comman == '3'){
+                printf("Enter number of passengers: ");
+                scanf("%d", &number);
+                target = find_number(start, number);
+            }
+
+            if (target != NULL)
+                print(target);
+            else
+                printf("No carriage with specified parameters.\n")
+        }
+
+        /* exit */
+        if (command == '7'){
             destroy(start);
             break;
         }

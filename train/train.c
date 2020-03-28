@@ -3,8 +3,18 @@
 #include <string.h>
 #define MAX_passengers 10
 
+/*
+ * Struct: carriage
+ * name: string, name of the carriage
+ * n_passengers: integer number of passengers in the carriage
+ * passengers: string array, names of passengers
+ * isTreasureHere: string, inforamation whether treasure
+ *                 in this carriage or not, "Yes" or "No"
+ * prev: link to the previous element of the doubly linked list
+ * next: link to the next element of the doubly linked list
+ */
 typedef struct carriage {
-    char *number;
+    char *name;
     int n_passengers;
     char *passengers[MAX_passengers];
     char *isTreasureHere;
@@ -12,14 +22,23 @@ typedef struct carriage {
 	struct carriage * next;
 } carriage;
 
+/*
+ * Function: display
+ * -----------------
+ * displays contents of doubly linked list of carriage elements
+ *
+ * start: firslt element of linked list
+ *
+ * returns: nothing
+ */
 void display(carriage *start){
 	carriage *i = start;
     int k;
 
-	for ( ; i != NULL; i=i->next){ /* i=(*i).next */
+	for ( ; i != NULL; i=i->next){
 
         printf("Number of carriage: ");
-        printf("%s\n", i->number);
+        printf("%s\n", i->name);
 
 		printf("Number of passengers: %d\nPassengers: ", i->n_passengers);
         for (k = 0; k < i->n_passengers; k++){
@@ -33,38 +52,64 @@ void display(carriage *start){
 	}
 }
 
+/*
+ * Function: add_carriage
+ * -----------------
+ * adds new element to doubly linked list of carriage elements
+ *
+ * last: last element of the linked list
+ *
+ * returns: link to newly created carriage
+ */
 carriage *add_carriage(carriage *last){
 	carriage *new = malloc(sizeof(carriage));
     int i, n;
-    char name[30];
+    char passenger_name[30];
     char isTreasureHere[4];
-    char number[30];
+    char carriage_name[30];
 
     printf("Enter number of carriage: ");
-    scanf("%29s", number);
-    new->number = malloc(strlen(number) + 1);
-    strcpy(new->number, number);
+    scanf("%29s", carriage_name);
+    /* allocate memory for string */
+    new->name = malloc(strlen(carriage_name) + 1);
+    strcpy(new->name, carriage_name);
 
-    printf("Enter number of passengers: ");
-    scanf("%d", &n);
-    new->n_passengers = n;
+    while (1){
+        printf("Enter number of passengers: ");
+        scanf("%d", &n);
+        if (n <= MAX_passengers){
+            new->n_passengers = n;
+            break;
+        }
+        printf("Too many passengers.\n");
+    }
 
     if (n != 0){
         printf("Enter names of passengers: ");
         for (i = 0; i < new->n_passengers; i++){
-            scanf("%29s", name);
-            new->passengers[i] = malloc(strlen(name) + 1);
-            strcpy(new->passengers[i], name);
+            scanf("%29s", passenger_name);
+            /* allocate memory for string */
+            new->passengers[i] = malloc(strlen(passenger_name) + 1);
+            strcpy(new->passengers[i], passenger_name);
         }
     }
 
     printf("Is Treasure in this carriage? ");
     scanf("%3s", isTreasureHere);
+    /* allocate memory for string */
     new->isTreasureHere = malloc(strlen(isTreasureHere) + 1);
     strcpy(new->isTreasureHere, isTreasureHere);
 
+    /* as it is the last element of the linked list, there is no next element */
     new->next = NULL;
 
+    /*
+        if it wasn't the first element of the list, then it is possible
+        to specify previous element and change previous element's link to
+        the next element to this element
+
+        else set link to previous element to NULL
+    */
     if (last != NULL){
         last->next = new;
         new->prev = last;
@@ -74,7 +119,16 @@ carriage *add_carriage(carriage *last){
 	return new;
 }
 
-carriage *release(carriage *start){
+/*
+ * Function: destroy
+ * -----------------
+ * removes elements starting from start
+ *
+ * start: first element to remove
+ *
+ * returns: new last element of the list, if there is none, returns NULL
+ */
+carriage *destroy(carriage *start){
 	carriage *i = start;
 	carriage *next = NULL;
     carriage *prev = NULL;
@@ -85,8 +139,13 @@ carriage *release(carriage *start){
         for (k = 0; k < i->n_passengers; k++){
             free(i->passengers[k]);
         }
-        free(i->number);
+        free(i->name);
         free(i->isTreasureHere);
+        /*
+            if there is previous element then we are not removing an entire list,
+            so we need to change link of the previous element to the next
+            element to NULL, as there is no next element anymore
+        */
         if (i->prev != NULL){
             i->prev->next = NULL;
             prev = i->prev;
@@ -114,6 +173,7 @@ int main(){
         printf("%s", help);
         printf("Enter command number: ");
         scanf(" %c", &command);
+        printf("\n");
 
         //add carriage
         if (command == '1'){
@@ -129,7 +189,7 @@ int main(){
 
         //destroy last carriage
         if (command == '3'){
-            last = release(last);
+            last = destroy(last);
             if (last != NULL){
                 if (last->prev == NULL)
                     start = NULL;
@@ -138,13 +198,13 @@ int main(){
 
         //destroy train
         if (command == '4'){
-            last = release(start);
+            last = destroy(start);
             start = NULL;
         }
 
         //exit
         if (command == '5'){
-            release(start);
+            destroy(start);
             break;
         }
         printf("\n");

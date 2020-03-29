@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "str_to_int.h"
 #define MAX_passengers 10
 
 /*
@@ -32,6 +31,7 @@ typedef struct carriage {
  * returns: nothing
  */
 void print(carriage *crrg){
+    int k = 0;
     printf("Number of carriage: ");
     printf("%s\n", crrg->name);
 
@@ -55,10 +55,11 @@ void print(carriage *crrg){
  */
 void display(carriage *start){
 	carriage *i = start;
-    int k;
 
+    printf("-----------------------------------------------------\n");
 	for ( ; i != NULL; i=i->next){
         print(i);
+        printf("-----------------------------------------------------\n");
 	}
 }
 
@@ -67,13 +68,15 @@ void display(carriage *start){
  * -----------------
  * adds new element to doubly linked list of carriage elements
  *
- * last: last element of the linked list
+ * last: element before newly added element
  *
  * returns: link to newly created carriage
  */
 carriage *add_carriage(carriage *last){
 	carriage *new = malloc(sizeof(carriage));
-    int i, n;
+    carriage *temp = NULL;
+    int i = 0;
+    int n = 0;
     char carriage_name[30];
     char passenger_name[30];
 
@@ -103,9 +106,6 @@ carriage *add_carriage(carriage *last){
         }
     }
 
-    /* as it is the last element of the linked list, there is no next element */
-    new->next = NULL;
-
     /*
         if it wasn't the first element of the list, then it is possible
         to specify previous element and change previous element's link to
@@ -113,9 +113,16 @@ carriage *add_carriage(carriage *last){
 
         else set link to previous element to NULL
     */
+
     if (last != NULL){
+        temp = last->next;
         last->next = new;
+        new->next = temp;
+
         new->prev = last;
+        if (temp != NULL){
+            temp->prev = new;
+        }
     }
     else new->prev = NULL;
 
@@ -135,7 +142,7 @@ carriage *destroy(carriage *start){
 	carriage *i = start;
 	carriage *next = NULL;
     carriage *prev = NULL;
-    int k;
+    int k = 0;
 
 	for ( ; i != NULL ; i = next){
 		next = i->next;
@@ -171,9 +178,10 @@ carriage *destroy(carriage *start){
  */
 carriage *find_name(carriage *start, char *name){
     carriage *target = NULL;
+    carriage *i = start;
 
     for ( ; i != NULL ; i=i->next){
-        if (i->name == name){
+        if (strcmp(i->name, name) == 0){
             target = i;
             break;
         }
@@ -194,9 +202,10 @@ carriage *find_name(carriage *start, char *name){
  */
 carriage *find_number(carriage *start, int number){
     carriage *target = NULL;
+    carriage *i = start;
 
     for ( ; i != NULL ; i=i->next){
-        if (i->n_passengers == name){
+        if (i->n_passengers == number){
             target = i;
             break;
         }
@@ -217,10 +226,11 @@ carriage *find_number(carriage *start, int number){
 carriage *find_min(carriage *start){
     carriage *target = NULL;
     int min = MAX_passengers + 1;
+    carriage *i = start;
 
     for ( ; i != NULL ; i=i->next){
         if (i->n_passengers < min){
-            target_min = i;
+            target = i;
             min = i->n_passengers;
         }
     }
@@ -239,16 +249,17 @@ carriage *find_min(carriage *start){
  */
 carriage *find_max(carriage *start){
     carriage *target = NULL;
+    carriage *i = start;
     int max = -1;
 
     for ( ; i != NULL ; i=i->next){
         if (i->n_passengers > max){
-            target_max = i;
+            target = i;
             max = i->n_passengers;
         }
     }
 
-    return target
+    return target;
 }
 
 int main(){
@@ -260,15 +271,17 @@ int main(){
     char sub_command;
     char name[30];
     char *help;
-    int number;
+    int number = 0;
 
-    help = "Add carriage to the train (1)\n"
+    help = "-----------------------------------------------------\n"
+           "Add carriage to the train (1)\n"
            "Show every carriage info (2)\n"
            "Destroy last carriage (3)\n"
            "Destroy train (4)\n"
            "Find carriage by name (5)\n"
            "Find carriage by number of passengers (6)\n"
-           "Exit (7)\n";
+           "Exit (7)\n"
+           "-----------------------------------------------------\n";
 
     while (1){
         printf("%s", help);
@@ -278,12 +291,31 @@ int main(){
 
         /* add carriage */
         if (command == '1'){
-            printf("Add carriage to the end of the train (1)\n"
-                   "Add carriage after carriage with specified name (2)\n")
-            new = add_carriage(last);
-            if (start == NULL)
-                start = new;
-            last = new;
+            printf("-----------------------------------------------------\n"
+                   "Add carriage to the end of the train (1)\n"
+                   "Add carriage after carriage with specified name (2)\n"
+                   "-----------------------------------------------------\n");
+            printf("Choose option: ");
+            scanf(" %c", &sub_command);
+            printf("\n");
+
+            if (sub_command == '1'){
+                new = add_carriage(last);
+                if (start == NULL)
+                    start = new;
+                last = new;
+            }
+
+            if (sub_command == '2'){
+                printf("Enter name: ");
+                scanf("%29s", name);
+                printf("\n");
+                target = find_name(start, name);
+                if (target != NULL)
+                    new = add_carriage(target);
+                else
+                    printf("No carriage with specified parameters found.\n");
+            }
         }
 
         /* show every carriage info */
@@ -293,9 +325,8 @@ int main(){
         /* destroy last carriage */
         if (command == '3'){
             last = destroy(last);
-            if (last != NULL){
-                if (last->prev == NULL)
-                    start = NULL;
+            if (last == NULL){
+                start = NULL;
             }
         }
 
@@ -309,32 +340,47 @@ int main(){
         if (command == '5'){
             printf("Enter name: ");
             scanf("%29s", name);
+            printf("\n");
             target = find_name(start, name);
-            print(target);
+            if (target != NULL){
+                printf("-----------------------------------------------------\n");
+                print(target);
+                printf("-----------------------------------------------------\n");
+            }
+            else
+                printf("No carriage with specified parameters found.\n");
         }
 
         /* find carriage by number of passengers */
         if (command == '6'){
-            printf("Find carriage with:\n"
+            printf("-----------------------------------------------------\n"
+                   "Find carriage with:\n"
                    "\tmaximum number of passengers (1)\n"
                    "\tminimum number of passengers (2)\n"
-                   "\tspecific number of passengers (3)\n")
-            scanf(" %c", sub_command);
+                   "\tspecific number of passengers (3)\n"
+                   "-----------------------------------------------------\n");
+            printf("Choose option: ");
+            scanf(" %c", &sub_command);
+            printf("\n");
 
             if (sub_command == '1')
                 target = find_max(start);
             if (sub_command == '2')
                 target = find_min(start);
-            if (sub_comman == '3'){
+            if (sub_command == '3'){
                 printf("Enter number of passengers: ");
                 scanf("%d", &number);
+                printf("\n");
                 target = find_number(start, number);
             }
 
-            if (target != NULL)
+            if (target != NULL){
+                printf("-----------------------------------------------------\n");
                 print(target);
+                printf("-----------------------------------------------------\n");
+            }
             else
-                printf("No carriage with specified parameters.\n")
+                printf("No carriage with specified parameters found.\n");
         }
 
         /* exit */
@@ -345,7 +391,7 @@ int main(){
         printf("\n");
     }
 
-    printf("Train destroyed\n");
+    printf("Train destroyed.\n");
 
 return 0;
 

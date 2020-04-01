@@ -236,6 +236,7 @@ def check_for_updates_command(update, context):
         global keywords
         global chat_id
 
+        is_there = False
         for source in feeds:
             feed = feeds[source]
             ent = feedparser.parse(feed['link']).entries
@@ -253,6 +254,9 @@ def check_for_updates_command(update, context):
                     n += 1
                     article = ent[n]
 
+                if n != 0:
+                    is_there = True
+
                 # в обратном порядке просматриваем новости
                 for article in articles[::-1]:
                     text = get_description(article, feed, keywords[source])
@@ -265,6 +269,10 @@ def check_for_updates_command(update, context):
                 #эта строчка обновляет время последней новости у источника
                 feed['date'] = ent[0].published
                 bump_feeds('feeds', feeds)
+        if not is_there:
+            context.bot.send_message(chat_id=chat_id, \
+            text="Тут не на что смотреть, уходи.",\
+            parse_mode='HTML')
     except Exception as ex:
         context.bot.send_message(chat_id=chat_id, \
         text="Ой..."+'\n'+format_exc())

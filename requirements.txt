@@ -1,6 +1,0 @@
-python-telegram-bot
-feedparser
-beautifulsoup4
-nltk
-langcodes
-langdetect

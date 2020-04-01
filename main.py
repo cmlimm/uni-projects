@@ -10,8 +10,8 @@ worker = updater.job_queue
 dispatcher = updater.dispatcher
 
 try:
-    feeds = read_feeds('feeds')
-    keywords = read_keywords('keywords')
+    feeds = read_feeds('feeds.txt')
+    keywords = read_keywords('keywords.txt')
 except:
     add_to_log('log.log', format_exc())
 
@@ -53,8 +53,8 @@ def sub(update, context):
                 if '::' not in feed_name and '::' not in feed_link:
                     feeds[feed_name] = {'link':feed_link, 'date':feed_date, 'summary':feed_summary}
                     keywords[feed_name] = []
-                    bump_feeds('feeds', feeds)
-                    bump_keywords('keywords', keywords)
+                    bump_feeds('feeds.txt', feeds)
+                    bump_keywords('keywords.txt', keywords)
                     context.bot.send_message(chat_id=update.effective_chat.id, \
                     text='Вы подписались на источник {}'.format(feed_name))
                 else:
@@ -91,7 +91,7 @@ def addkeywords(update, context):
                 # повторяющиеся слова не добавляем
                 if word not in keywords[feed]:
                     keywords[feed].append(word)
-            bump_keywords('keywords', keywords)
+            bump_keywords('keywords.txt', keywords)
             context.bot.send_message(chat_id=update.effective_chat.id, \
             text='Добавлены ключевые слова к источнику {}: {}'.format(feed, ', '.join(new_keywords)))
         else:
@@ -121,8 +121,8 @@ def unsub(update, context):
                 deleted.append(source)
 
         if deleted != []:
-            bump_feeds('feeds', feeds)
-            bump_keywords('keywords', keywords)
+            bump_feeds('feeds.txt', feeds)
+            bump_keywords('keywords.txt', keywords)
             context.bot.send_message(chat_id=update.effective_chat.id, \
             text='Вы отписались от следующих источников: {}'.format(', '.join(deleted)))
         else:
@@ -150,7 +150,7 @@ def deletekeywords(update, context):
                     keywords[feed].remove(word)
                     deleted.append(word)
             if deleted != []:
-                bump_keywords('keywords', keywords)
+                bump_keywords('keywords.txt', keywords)
                 context.bot.send_message(chat_id=update.effective_chat.id, \
                 text='Удалены ключевые слова в источнике {}: {}'.format(feed, ', '.join(deleted)))
             else:
@@ -223,7 +223,7 @@ def check_for_updates(context):
                 #закомментировать когда захочется потестить
                 #эта строчка обновляет время последней новости у источника
                 feed['date'] = ent[0].published
-                bump_feeds('feeds', feeds)
+                bump_feeds('feeds.txt', feeds)
     except Exception as ex:
         context.bot.send_message(chat_id=chat_id, \
         text="Ой..."+'\n'+format_exc())
@@ -268,7 +268,7 @@ def check_for_updates_command(update, context):
                 #закомментировать когда захочется потестить
                 #эта строчка обновляет время последней новости у источника
                 feed['date'] = ent[0].published
-                bump_feeds('feeds', feeds)
+                bump_feeds('feeds.txt', feeds)
         if not is_there:
             context.bot.send_message(chat_id=chat_id, \
             text="Тут не на что смотреть, уходи.",\

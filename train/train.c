@@ -5,6 +5,7 @@
 
 /*
  * Struct: carriage
+ * ----------------
  * name: string, name of the carriage
  * n_passengers: integer number of passengers in the carriage
  * passengers: string array, names of passengers
@@ -18,12 +19,12 @@ typedef struct carriage {
     int n_passengers;
     char *passengers[MAX_passengers];
     struct carriage * prev;
-	struct carriage * next;
+    struct carriage * next;
 } carriage;
 
 /*
  * Function: print
- * -----------------
+ * ---------------
  * prints contents of one carriage
  *
  * crrg: carriage to print
@@ -56,16 +57,16 @@ void print(carriage *crrg){
 void display(carriage *start){
 	carriage *i = start;
 
-    printf("-----------------------------------------------------\n");
 	for ( ; i != NULL; i=i->next){
         print(i);
-        printf("-----------------------------------------------------\n");
+        if (i->next != NULL)
+            printf("-----------------------------------------------------\n");
 	}
 }
 
 /*
  * Function: add_carriage
- * -----------------
+ * ----------------------
  * adds new element to doubly linked list of carriage elements
  *
  * last: element before newly added element
@@ -168,7 +169,7 @@ carriage *destroy(carriage *start){
 
 /*
  * Function: find_name
- * -----------------
+ * -------------------
  * finds carriage with specified name
  *
  * start: first element of the list
@@ -192,7 +193,7 @@ carriage *find_name(carriage *start, char *name){
 
 /*
  * Function: find_number
- * -----------------
+ * ---------------------
  * finds carriage with specified number of passengers
  *
  * start: first element of the list
@@ -216,7 +217,7 @@ carriage *find_number(carriage *start, int number){
 
 /*
  * Function: find_min
- * -----------------
+ * ------------------
  * finds carriage with minimum number of passengers
  *
  * start: first element of the list
@@ -240,7 +241,7 @@ carriage *find_min(carriage *start){
 
 /*
  * Function: find_min
- * -----------------
+ * ------------------
  * finds carriage with maximum number of passengers
  *
  * start: first element of the list
@@ -320,10 +321,15 @@ int main(){
 
         /* show every carriage info */
         if (command == '2')
+            printf("-----------------------------------------------------\n");
             display(start);
+            printf("-----------------------------------------------------\n");
 
         /* destroy last carriage */
         if (command == '3'){
+            printf("-----------------------------------------------------\n");
+            printf("Destroyed carraige %s.\n", last->name);
+            printf("-----------------------------------------------------\n");
             last = destroy(last);
             if (last == NULL){
                 start = NULL;
@@ -333,6 +339,9 @@ int main(){
         /* destroy train */
         if (command == '4'){
             last = destroy(start);
+            printf("-----------------------------------------------------\n");
+            printf("Train destroyed.\n");
+            printf("-----------------------------------------------------\n");
             start = NULL;
         }
 
@@ -391,8 +400,7 @@ int main(){
         printf("\n");
     }
 
-    printf("Train destroyed.\n");
-
+printf("Have a nice day.\n");
 return 0;
 
 }

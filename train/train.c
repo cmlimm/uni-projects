@@ -55,9 +55,9 @@ void print(carriage *crrg){
  * returns: nothing
  */
 void display(carriage *start){
-	carriage *i = start;
+    carriage *i = start;
 
-	for ( ; i != NULL; i=i->next){
+    for ( ; i != NULL; i=i->next){
         print(i);
         if (i->next != NULL)
             printf("-----------------------------------------------------\n");
@@ -74,7 +74,7 @@ void display(carriage *start){
  * returns: link to newly created carriage
  */
 carriage *add_carriage(carriage *last){
-	carriage *new = malloc(sizeof(carriage));
+    carriage *new = malloc(sizeof(carriage));
     carriage *temp = NULL;
     int i = 0;
     int n = 0;
@@ -140,8 +140,8 @@ carriage *add_carriage(carriage *last){
  * returns: new last element of the list, if there is none, returns NULL
  */
 carriage *destroy(carriage *start){
-	carriage *i = start;
-	carriage *next = NULL;
+    carriage *i = start;
+    carriage *next = NULL;
     carriage *prev = NULL;
     int k = 0;
 
@@ -264,7 +264,7 @@ carriage *find_max(carriage *start){
 }
 
 int main(){
-	carriage *start = NULL;
+    carriage *start = NULL;
     carriage *last = NULL;
     carriage *new = NULL;
     carriage *target = NULL;

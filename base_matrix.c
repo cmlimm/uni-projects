@@ -53,8 +53,11 @@ void matrix_deallocate(matrix *mtrx){
  *
  * returns: nothing
  */
-void matrix_fill(matrix *mtrx, double value){
+matrix *matrix_fill(int rows, int columns, double value){
     int i, j;
+    matrix *mtrx;
+
+    mtrx = matrix_allocate(rows, columns);
 
     for (i = 0; i < mtrx->rows; i++){
         for (j = 0; j < mtrx->columns; j++){
@@ -62,6 +65,7 @@ void matrix_fill(matrix *mtrx, double value){
         }
     }
 
+    return mtrx;
 }
 
 /*
@@ -92,10 +96,8 @@ int main(){
     columns = 4;
     value = 1;
 
-    printf("Allocating memory...\n");
-    mtrx = matrix_allocate(rows, columns);
     printf("Filling matrix...\n");
-    matrix_fill(mtrx, value);
+    mtrx = matrix_fill(rows, columns, value);
     printf("Showing matrix...\n");
     matrix_show(mtrx);
     printf("Deallocating memory...\n");

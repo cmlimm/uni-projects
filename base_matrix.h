@@ -16,6 +16,14 @@ typedef struct matrix{
 matrix *matrix_allocate(int rows, int columns);
 void matrix_deallocate(matrix *mtrx);
 void matrix_fill(matrix *mtrx, double value);
-matrix matrix_row(int index);
-matrix matrix_column(int index);
 void matrix_show(matrix *mtrx);
+
+void matrix_random(matrix *mtrx, int min, int max) /* not implemented */
+void matrix_identity(matrix *mtrx) /* not implemented */
+matrix *matrix_add(matrix *mtrx1, matrix *mtrx2) /* not implemented */
+matrix *matrix_dot(matrix *mtrx1, matrix *mtrx2) /* not implemented */
+matrix *matrix_mult(matrix *mtrx1, int a) /* not implemented */
+matrix *matrix_transpose(matrix *mtrx1) /* not implemented */
+matrix *matrix_row(int index); /* not implemented */
+matrix *matrix_column(int index); /* not implemented */
+double matrix_det(matrix *mtrx); /* not implemented */

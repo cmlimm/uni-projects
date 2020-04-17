@@ -11,14 +11,19 @@
  *
  * returns: matrix
  */
-void matrix_allocate(matrix *mtrx, int rows, int columns){
-    mtrx->values = (double **)malloc(sizeof(double *) * rows);
+matrix *matrix_allocate(int rows, int columns){
+    matrix *mtrx = malloc(sizeof(matrix));
+    mtrx->values = malloc(sizeof(double *)*rows);
     size_t i;
 
+    mtrx->rows = rows;
+    mtrx->columns = columns;
+
     for (i = 0; i < rows; i++){
-        mtrx->values[i] = (double *)malloc(sizeof(double) * columns);
+        mtrx->values[i] = malloc(sizeof(double)*columns);
     }
 
+    return mtrx;
 }
 
 /*
@@ -35,6 +40,7 @@ void matrix_deallocate(matrix *mtrx){
         free(mtrx->values[i]);
     }
     free(mtrx->values);
+    free(mtrx);
 
 }
 
@@ -80,19 +86,19 @@ void matrix_show(matrix *mtrx){
 
 int main(){
     int rows, columns, value;
-    matrix *mtrx = NULL;
+    matrix *mtrx;
 
     rows = 3;
     columns = 4;
     value = 1;
 
-    printf("Allocating memory...");
-    matrix_allocate(mtrx, rows, columns);
-    printf("Filling matrix...");
+    printf("Allocating memory...\n");
+    mtrx = matrix_allocate(rows, columns);
+    printf("Filling matrix...\n");
     matrix_fill(mtrx, value);
-    printf("Showing memory...");
+    printf("Showing matrix...\n");
     matrix_show(mtrx);
-    printf("Deallocating memory...");
+    printf("Deallocating memory...\n");
     matrix_deallocate(mtrx);
 
     return 0;

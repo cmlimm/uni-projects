@@ -13,7 +13,7 @@ typedef struct matrix{
     double **values;
 } matrix;
 
-void matrix_allocate(matrix *mtrx, int rows, int columns);
+matrix *matrix_allocate(int rows, int columns);
 void matrix_deallocate(matrix *mtrx);
 void matrix_fill(matrix *mtrx, double value);
 matrix matrix_row(int index);

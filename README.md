@@ -1,2 +1,2 @@
 # matrix_module
-Python module written in C for working with matrixes
+Python module written in C dedicated to working with matrixes

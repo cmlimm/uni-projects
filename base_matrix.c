@@ -169,28 +169,108 @@ MatrixObject *matrix_add(MatrixObject *matrix1, MatrixObject *matrix2){
     return matrix;
 }
 
+/*
+ * Function: matrix_mult
+ * -----------------------
+ * multiplies matrix by a number
+ *
+ * returns: MatrixObject
+ */
+MatrixObject *matrix_mult(MatrixObject *matrix, double a){
+    int i, j;
+    int rows = matrix->rows;
+    int columns = matrix->columns;
+    MatrixObject *matrix_result;
+
+    matrix_result = matrix_allocate(rows, columns);
+
+    for (i = 0; i < matrix->rows; i++){
+        for (j = 0; j < matrix->columns; j++){
+            matrix_result->values[i][j] = matrix->values[i][j]*a;
+        }
+    }
+
+    return matrix_result;
+}
+
+/*
+ * Function: matrix_negative
+ * -----------------------
+ * multiplies matrix by -1
+ *
+ * returns: MatrixObject
+ */
+MatrixObject *matrix_negative(MatrixObject *matrix){
+    return matrix_mult(matrix, -1);
+}
+
+/*
+ * Function: matrix_sub
+ * -----------------------
+ * subtracts two matrixes
+ *
+ * returns: MatrixObject
+ */
+MatrixObject *matrix_sub(MatrixObject *matrix1, MatrixObject *matrix2){
+    return matrix_add(matrix1, matrix_negative(matrix2));
+}
+
+/*
+ * Function: matrix_transpose
+ * -----------------------
+ * transposes matrix
+ *
+ * returns: MatrixObject
+ */
+MatrixObject *matrix_transpose(MatrixObject *matrix){
+    int i, j;
+    int rows = matrix->rows;
+    int columns = matrix->columns;
+    MatrixObject *matrix_result;
+
+    matrix_result = matrix_allocate(columns, rows);
+
+    for (i = 0; i < matrix->columns; i++){
+        for (j = 0; j < matrix->rows; j++){
+            matrix_result->values[i][j] = matrix->values[j][i];
+        }
+    }
+
+    return matrix_result;
+}
+
 int main(){
     int rows, columns;
     MatrixObject *matrix;
-    MatrixObject *matrix1, *matrix2;
+    MatrixObject *matrix1;
+    /*MatrixObject *matrix2;*/
 
     rows = 2;
     columns = 3;
 
-    matrix1 = matrix_allocate(rows, columns);
-    matrix2 = matrix_allocate(rows, columns);
+    matrix1 = matrix_allocate(columns, columns);
+    /*matrix1 = matrix_allocate(rows, columns);*/
+    /*matrix2 = matrix_allocate(rows, columns);*/
 
     matrix1->values[0][0] = 1; matrix1->values[0][1] = 2; matrix1->values[0][2] = 3;
     matrix1->values[1][0] = 4; matrix1->values[1][1] = 5; matrix1->values[1][2] = 6;
+    matrix1->values[2][0] = 7; matrix1->values[2][1] = 8; matrix1->values[2][2] = 9;
 
-    matrix2->values[0][0] = 7; matrix2->values[0][1] = 8; matrix2->values[0][2] = 9;
-    matrix2->values[1][0] = 10; matrix2->values[1][1] = 11; matrix2->values[1][2] = 12;
+    /*matrix1->values[0][0] = 1; matrix1->values[0][1] = 2; matrix1->values[0][2] = 3;
+    matrix1->values[1][0] = 4; matrix1->values[1][1] = 5; matrix1->values[1][2] = 6;*/
+
+    /*matrix2->values[0][0] = 7; matrix2->values[0][1] = 8; matrix2->values[0][2] = 9;
+    matrix2->values[1][0] = 10; matrix2->values[1][1] = 11; matrix2->values[1][2] = 12;*/
 
     printf("Filling matrix...\n");
     /*matrix = matrix_fill(rows, columns, 1.0);*/
     /*matrix = matrix_random(rows, columns, 1.5, 2.5);*/
     /*matrix = matrix_identity(rows);*/
-    matrix = matrix_add(matrix1, matrix2);
+    /*matrix = matrix_add(matrix1, matrix2);*/
+    /*matrix = matrix_mult(matrix1, 2.1);*/
+    /*matrix = matrix_negative(matrix1);*/
+    /*matrix = matrix_sub(matrix1, matrix2);*/
+    matrix = matrix_transpose(matrix1);
     printf("Showing matrix...\n");
     matrix_str(matrix);
     printf("Deallocating memory...\n");

@@ -32,10 +32,10 @@ MatrixObject *matrix_fill(int rows, int columns, double value);
 MatrixObject *matrix_random(int rows, int columns, double min, double max);
 MatrixObject *matrix_identity(int rows);
 MatrixObject *matrix_add(MatrixObject *matrix1, MatrixObject *matrix2);
+MatrixObject *matrix_mult(MatrixObject *matrix, double a);
+MatrixObject *matrix_negative(MatrixObject *matrix);
+MatrixObject *matrix_sub(MatrixObject *matrix1, MatrixObject *matrix2);
+MatrixObject *matrix_transpose(MatrixObject *matrix);
 
-MatrixObject *matrix_mult(MatrixObject *matrix, int a); /* not implemented */
 MatrixObject *matrix_dot(MatrixObject *matrix1, MatrixObject *matrix2); /* not implemented */
-MatrixObject *matrix_transpose(MatrixObject *matrix); /* not implemented */
-MatrixObject *matrix_row(int index); /* not implemented */
-MatrixObject *matrix_column(int index); /* not implemented */
 double matrix_det(MatrixObject *matrix); /* not implemented */

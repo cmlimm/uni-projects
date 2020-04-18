@@ -76,7 +76,7 @@ MatrixObject *matrix_fill(int rows, int columns, double value){
  *
  * returns: nothing
  */
-void matrix_show(MatrixObject *matrix){
+void matrix_str(MatrixObject *matrix){
     int i, j;
 
     for (i = 0; i < matrix->rows; i++){
@@ -99,7 +99,7 @@ int main(){
     printf("Filling matrix...\n");
     matrix = matrix_fill(rows, columns, value);
     printf("Showing matrix...\n");
-    matrix_show(matrix);
+    matrix_str(matrix);
     printf("Deallocating memory...\n");
     matrix_deallocate(matrix);
 

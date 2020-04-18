@@ -36,6 +36,4 @@ MatrixObject *matrix_mult(MatrixObject *matrix, double a);
 MatrixObject *matrix_negative(MatrixObject *matrix);
 MatrixObject *matrix_sub(MatrixObject *matrix1, MatrixObject *matrix2);
 MatrixObject *matrix_transpose(MatrixObject *matrix);
-
-MatrixObject *matrix_dot(MatrixObject *matrix1, MatrixObject *matrix2); /* not implemented */
-double matrix_det(MatrixObject *matrix); /* not implemented */
+MatrixObject *matrix_dot(MatrixObject *matrix1, MatrixObject *matrix2);

@@ -11,19 +11,19 @@
  *
  * returns: matrix
  */
-matrix *matrix_allocate(int rows, int columns){
-    matrix *mtrx = malloc(sizeof(matrix));
-    mtrx->values = malloc(sizeof(double *)*rows);
+MatrixObject *matrix_allocate(int rows, int columns){
+    MatrixObject *matrix = malloc(sizeof(MatrixObject));
+    matrix->values = malloc(sizeof(double *)*rows);
     size_t i;
 
-    mtrx->rows = rows;
-    mtrx->columns = columns;
+    matrix->rows = rows;
+    matrix->columns = columns;
 
     for (i = 0; i < rows; i++){
-        mtrx->values[i] = malloc(sizeof(double)*columns);
+        matrix->values[i] = malloc(sizeof(double)*columns);
     }
 
-    return mtrx;
+    return matrix;
 }
 
 /*
@@ -33,14 +33,14 @@ matrix *matrix_allocate(int rows, int columns){
  *
  * returns: nothing
  */
-void matrix_deallocate(matrix *mtrx){
+void matrix_deallocate(MatrixObject *matrix){
     size_t i;
 
-    for (i = 0; i < mtrx->rows; i++){
-        free(mtrx->values[i]);
+    for (i = 0; i < matrix->rows; i++){
+        free(matrix->values[i]);
     }
-    free(mtrx->values);
-    free(mtrx);
+    free(matrix->values);
+    free(matrix);
 
 }
 
@@ -53,19 +53,19 @@ void matrix_deallocate(matrix *mtrx){
  *
  * returns: nothing
  */
-matrix *matrix_fill(int rows, int columns, double value){
+MatrixObject *matrix_fill(int rows, int columns, double value){
     int i, j;
-    matrix *mtrx;
+    MatrixObject *matrix;
 
-    mtrx = matrix_allocate(rows, columns);
+    matrix = matrix_allocate(rows, columns);
 
-    for (i = 0; i < mtrx->rows; i++){
-        for (j = 0; j < mtrx->columns; j++){
-            mtrx->values[i][j] = value;
+    for (i = 0; i < matrix->rows; i++){
+        for (j = 0; j < matrix->columns; j++){
+            matrix->values[i][j] = value;
         }
     }
 
-    return mtrx;
+    return matrix;
 }
 
 /*
@@ -76,12 +76,12 @@ matrix *matrix_fill(int rows, int columns, double value){
  *
  * returns: nothing
  */
-void matrix_show(matrix *mtrx){
+void matrix_show(MatrixObject *matrix){
     int i, j;
 
-    for (i = 0; i < mtrx->rows; i++){
-        for (j = 0; j < mtrx->columns; j++){
-            printf("%lf ", mtrx->values[i][j]);
+    for (i = 0; i < matrix->rows; i++){
+        for (j = 0; j < matrix->columns; j++){
+            printf("%lf ", matrix->values[i][j]);
         }
         printf("\n");
     }
@@ -90,18 +90,18 @@ void matrix_show(matrix *mtrx){
 
 int main(){
     int rows, columns, value;
-    matrix *mtrx;
+    MatrixObject *matrix;
 
     rows = 3;
     columns = 4;
     value = 1;
 
     printf("Filling matrix...\n");
-    mtrx = matrix_fill(rows, columns, value);
+    matrix = matrix_fill(rows, columns, value);
     printf("Showing matrix...\n");
-    matrix_show(mtrx);
+    matrix_show(matrix);
     printf("Deallocating memory...\n");
-    matrix_deallocate(mtrx);
+    matrix_deallocate(matrix);
 
     return 0;
 }

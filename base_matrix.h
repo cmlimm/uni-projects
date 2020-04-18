@@ -7,23 +7,23 @@
  * columns: integer number of columns
  * values: 2-dimensional array of double values in matrix
  */
-typedef struct matrix{
+typedef struct MatrixObject{
     int rows;
     int columns;
     double **values;
-} matrix;
+} MatrixObject;
 
-matrix *matrix_allocate(int rows, int columns);
-void matrix_deallocate(matrix *mtrx);
-matrix *matrix_fill(int rows, int columns, double value);
-void matrix_show(matrix *mtrx);
+MatrixObject *matrix_allocate(int rows, int columns);
+void matrix_deallocate(MatrixObject *mtrx);
+MatrixObject *matrix_fill(int rows, int columns, double value);
+void matrix_show(MatrixObject *mtrx);
 
-matrix *matrix_random(int rows, int columns, int min, int max); /* not implemented */
-matrix *matrix_identity(int rows); /* not implemented */
-matrix *matrix_add(matrix *mtrx1, matrix *mtrx2); /* not implemented */
-matrix *matrix_dot(matrix *mtrx1, matrix *mtrx2); /* not implemented */
-matrix *matrix_mult(matrix *mtrx1, int a); /* not implemented */
-matrix *matrix_transpose(matrix *mtrx1); /* not implemented */
-matrix *matrix_row(int index); /* not implemented */
-matrix *matrix_column(int index); /* not implemented */
-double matrix_det(matrix *mtrx); /* not implemented */
+MatrixObject *matrix_random(int rows, int columns, int min, int max); /* not implemented */
+MatrixObject *matrix_identity(int rows); /* not implemented */
+MatrixObject *matrix_add(MatrixObject *mtrx1, MatrixObject *mtrx2); /* not implemented */
+MatrixObject *matrix_dot(MatrixObject *mtrx1, MatrixObject *mtrx2); /* not implemented */
+MatrixObject *matrix_mult(MatrixObject *mtrx1, int a); /* not implemented */
+MatrixObject *matrix_transpose(MatrixObject *mtrx1); /* not implemented */
+MatrixObject *matrix_row(int index); /* not implemented */
+MatrixObject *matrix_column(int index); /* not implemented */
+double matrix_det(MatrixObject *mtrx); /* not implemented */

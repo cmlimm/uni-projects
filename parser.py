@@ -28,7 +28,7 @@ def get_description(article, feed, keywords):
 # наличие или отсутствие ключевых слов
 def find_keywords(text, keywords):
 
-    # автоматически пытаемся определить текст новости
+    # автоматически пытаемся определить язык текста новости
     lang = Language.make(language=detect(text)).language_name().lower()
     try:
         stemmer = SnowballStemmer(lang)

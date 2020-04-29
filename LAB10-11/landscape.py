@@ -4,6 +4,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from vector import *
 from matrix import *
+from getz import *
 import bmp_to_map
 
 window_width = 800
@@ -17,20 +18,22 @@ def init():
     glLoadIdentity()            # Сбрасываем все предыдущие трансформации
     gluPerspective(90, window_width / window_height, 0.001, 10) # Задаем перспективу
 	#gluOrtho2D(-1.0, 1.0, -1.0, 1.0) # Определяем границы рисования по горизонтали и вертикали
-    global anglex, angley, anglez, zoom, filled, height_map, camPOS, camDIR, camUP
+    global anglex, angley, anglez, zoom, filled, height_map, camPOS, camDIR, camUP, ballPOS, ballDIR
     anglex = 0
     angley = 0
     anglez = 0
     zoom = 1.0
     filled = 0
     height_map = bmp_to_map.height_map('map.bmp', 0.2)
-    camPOS = Vector(0, 0, -1)
-    camDIR = Vector(0, 0, 1)
-    camUP = Vector(0, 1, 0)
+    camPOS = Vector(0, 0, height_map[0][0])
+    camDIR = Vector(0.7, 0.7, 0)
+    camUP = Vector(0, 0, 1)
+    ballPOS = Vector(0, 0, height_map[0][0])
+    ballDIR = Vector(0.7, 0.7, 0)
 
 # Процедура обработки обычных клавиш
 def keyboardkeys(key, x, y):
-    global anglex, angley, anglez, zoom, filled, camPOS, camDIR, camUP
+    global anglex, angley, anglez, zoom, filled, camPOS, camDIR, camUP, ballPOS, ballDIR
     if key == b'\x1b':
         sys.exit(0)
     if key == b'w':
@@ -77,161 +80,54 @@ def keyboardkeys(key, x, y):
         rotM = Matrix.rotation_matrix(cross, -3.14/18)
         camUP = rotM.mult_vector(camUP)
         camDIR = rotM.mult_vector(camDIR)
+    if key == b'g':
+        ballPOS = ballPOS.add(ballDIR)
+    if key == b'b':
+        ballPOS = ballPOS.sub(ballDIR)
+    if key == b'n':
+        rotM = Matrix.rotation_matrix(Vector(0, 0, 1), 3.14/18)
+        ballDIR = rotM.mult_vector(ballDIR)
+    if key == b'v':
+        rotM = Matrix.rotation_matrix(Vector(0, 0, 1), -3.14/18)
+        ballDIR = rotM.mult_vector(ballDIR)
     glutPostRedisplay()         # Вызываем процедуру перерисовки
 
-def cilinder():
-	R = 0.5
-
-	glBegin(GL_TRIANGLE_FAN)
-
-	glVertex3d( 0,  0, -0.5)
-	for i in range(21):
-		glVertex3d(R * cos(2*pi*i/20), \
-			R * sin(2*pi*i/20), -0.5)
-
-	glEnd()
-
-	glBegin(GL_QUAD_STRIP)
-
-	for i in range(21):
-		glVertex3d(R * cos(2*pi*i/20), \
-			R * sin(2*pi*i/20), -0.5)
-		glVertex3d(R * cos(2*pi*i/20), \
-			R * sin(2*pi*i/20), 0.5)
-
-	glEnd()
-
-	glBegin(GL_TRIANGLE_FAN)
-
-	glVertex3d( 0,  0, 0.5)
-	for i in range(21):
-		glVertex3d(R * cos(2*pi*i/20), \
-			R * sin(2*pi*i/20), 0.5)
-
-	glEnd()
-
-def conus():
-	R = 0.5
-
-	glBegin(GL_TRIANGLE_FAN)
-
-	glVertex3d( 0,  0, -0.5)
-	for i in range(21):
-		glVertex3d(R * cos(2*pi*i/20), \
-			R * sin(2*pi*i/20), -0.5)
-
-	glEnd()
-
-	glBegin(GL_TRIANGLE_FAN)
-
-	glVertex3d( 0,  0, 0.5)
-	for i in range(21):
-		glVertex3d(R * cos(2*pi*i/20), \
-			R * sin(2*pi*i/20), -0.5)
-
-	glEnd()
-
 def sphere():
-	R = 0.5
+    R = 0.5
 
-	for j in range(-9,9):
-		glBegin(GL_QUAD_STRIP)
+    for j in range(-9,9):
+        glBegin(GL_QUAD_STRIP)
 
-		for i in range(21):
-			glVertex3d(R * cos(pi*j/18) * cos(2*pi*i/20), \
-				R * cos(pi*j/18) * sin(2*pi*i/20), \
-				R * sin(pi*j/18))
-			glVertex3d(R * cos(pi*(j+1)/18) * cos(2*pi*i/20), \
-				R * cos(pi*(j+1)/18) * sin(2*pi*i/20), \
-				R * sin(pi*(j+1)/18))
-
-		glEnd()
-
-def thor():
-	R = 0.5
-	R2 = R * 0.3
-
-	for i in range(20):
-		glBegin(GL_QUAD_STRIP)
-
-		for j in range(21):
-			glVertex3d((R + R2 * cos(2*pi*j/20)) * cos(2*pi*i/20), \
-				(R + R2 * cos(2*pi*j/20)) * sin(2*pi*i/20), \
-				R2 * sin(2*pi*j/20))
-			glVertex3d((R + R2 * cos(2*pi*j/20)) * cos(2*pi*(i+1)/20), \
-				(R + R2 * cos(2*pi*j/20)) * sin(2*pi*(i+1)/20), \
-				R2 * sin(2*pi*j/20))
-
-		glEnd()
-
-def cube():
-	glBegin(GL_QUADS)
-
-	glVertex3d( 0.5,  0.5, 0.5)
-	glVertex3d(-0.5,  0.5, 0.5)
-	glVertex3d(-0.5, -0.5, 0.5)
-	glVertex3d( 0.5, -0.5, 0.5)
-
-	glVertex3d( 0.5,  0.5,-0.5)
-	glVertex3d(-0.5,  0.5,-0.5)
-	glVertex3d(-0.5, -0.5,-0.5)
-	glVertex3d( 0.5, -0.5,-0.5)
-
-	glVertex3d( 0.5,  0.5, 0.5)
-	glVertex3d( 0.5,  0.5,-0.5)
-	glVertex3d( 0.5, -0.5,-0.5)
-	glVertex3d( 0.5, -0.5, 0.5)
-
-	glVertex3d(-0.5,  0.5, 0.5)
-	glVertex3d(-0.5,  0.5,-0.5)
-	glVertex3d(-0.5, -0.5,-0.5)
-	glVertex3d(-0.5, -0.5, 0.5)
-
-	glVertex3d( 0.5,  0.5, 0.5)
-	glVertex3d( 0.5,  0.5,-0.5)
-	glVertex3d(-0.5,  0.5,-0.5)
-	glVertex3d(-0.5,  0.5, 0.5)
-
-	glVertex3d( 0.5, -0.5, 0.5)
-	glVertex3d( 0.5, -0.5,-0.5)
-	glVertex3d(-0.5, -0.5,-0.5)
-	glVertex3d(-0.5, -0.5, 0.5)
-
-	glEnd()
+        for i in range(21):
+            glColor3f(cos(pi*j/18), sin(2*pi*i/20), sin(pi*j/18))
+            glVertex3d(R * cos(pi*j/18) * cos(2*pi*i/20), R * cos(pi*j/18) * sin(2*pi*i/20), R * sin(pi*j/18))
+            glVertex3d(R * cos(pi*(j+1)/18) * cos(2*pi*i/20), R * cos(pi*(j+1)/18) * sin(2*pi*i/20), R * sin(pi*(j+1)/18))
+        glEnd()
 
 # Процедура рисования
 def draw(*args, **kwargs):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Очищаем экран и заливаем текущим цветом фона
     glMatrixMode(GL_MODELVIEW) # Выбираем модельно-видовую матрицу
     glLoadIdentity()           # Сбрасываем все предыдущие трансформации
-    global anglex, angley, anglez, zoom, filled, texID, camPOS, camDIR, camUP
+    global anglex, angley, anglez, zoom, filled, texID, camPOS, camDIR, camUP, ballPOS, ballDIR
     gluLookAt(camPOS.x, camPOS.y, camPOS.z,        # Положение камеры
               camPOS.x + camDIR.x, camPOS.y + camDIR.y, camPOS.z + camDIR.z,           # Точка, на которую смотрит камера
               camUP.x, camUP.y, camUP.z)           # Направление "верх" камеры
     glRotated(anglex,1,0,0)
     glRotated(angley,0,1,0)
     glRotated(anglez,0,0,1)
-    glRotated(-105,1,0,0)
     if filled == 1:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
     else:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
     glScaled(zoom, zoom, zoom)
 
-    glColor3f(1, 0, 0)
     glPushMatrix()
-    glScaled(0.2, 0.2, 1)
-    cilinder()
+    ballPOS.z = GetZ(ballPOS.x, ballPOS.y, height_map) + 0.5
+    glTranslated(ballPOS.x, ballPOS.y, ballPOS.z)
+    sphere()
     glPopMatrix()
 
-    glColor3f(0, 0.5, 0)
-    glPushMatrix()
-    glTranslated(0, 0, 0.5)
-    glScaled(1, 1, 0.2)
-    conus()
-    glPopMatrix()
-
-    glTranslated(-30, 0, 0)
     n = len(height_map)
     m = len(height_map[0])
     for y in range(1, n, 2):

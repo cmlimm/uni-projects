@@ -4,27 +4,35 @@
 
 static PyTypeObject MatrixType = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "matrixmanipulate.MatrixObject",
+    .tp_name = "matrixman.MatrixObject",
     .tp_doc = "Matrix objects",
     .tp_basicsize = sizeof(MatrixObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_new = Matrix_new,
-    .tp_init = (initproc) Matrix_init,
-    .tp_dealloc = (destructor) Matrix_dealloc,
+    .tp_new = PyType_GenericNew,
+    .tp_dealloc = (destructor) matrix_dealloc,
     .tp_methods = Matrix_methods,
 };
 
-PyMODINIT_FUNC PyInit_matrixmanipulate(void)
-{
-    return PyModule_Create(&matrixmaniplulatemodule);
-}
-
-static struct PyModuleDef matrixmaniplulatemodule = {
-    PyModuleDef_HEAD_INIT,
-    "matrixmanipulate",   /* name of module */
-    "Module dedicated to working with matrixes", /* module documentation, may be NULL */
-    -1,       /* size of per-interpreter state of the module,
-                 or -1 if the module keeps state in global variables. */
-    matrixmanipulatemethods
+static PyMethodDef MatrixMethods[] = {
+    {"fill", fill, METH_VARARGS,
+     "Returns matrix of specified size filled with one certain value"},
+    {"random", random, METH_VARARGS,
+     "Returns matrix of specified size filled with random values"},
+    {"identity", identity, METH_VARARGS,
+     "Return identity matrix of specified size"},
+    {NULL, NULL, 0, NULL}
 };
+
+static struct PyModuleDef matrixman = {
+    PyModuleDef_HEAD_INIT,
+    "matrixman",
+    "Module dedicated to working with matrixes",
+    -1,
+    MatrixMethods
+};
+
+PyMODINIT_FUNC PyInit_matrixman(void)
+{
+    return PyModule_Create(&matrixman);
+}

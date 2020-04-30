@@ -7,6 +7,7 @@ from matrix import *
 import utils
 import landscape
 import objects
+import skybox
 
 window_width = 800
 window_height = 600
@@ -17,9 +18,9 @@ def init():
     glClearColor(1.0, 1.0, 1.0, 1.0)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(90, window_width / window_height, 0.001, 100)
+    gluPerspective(90, window_width / window_height, 0.1, 1000)
 
-    global angle_delta, anglex, angley, anglez, zoom, filled, height_map, camPOS, camDIR, camUP, ballPOS, ballDIR, ball_angle_counter
+    global texID, angle_delta, anglex, angley, anglez, zoom, filled, height_map, camPOS, camDIR, camUP, ballPOS, ballDIR, ball_angle_counter
 
     angle_delta = 0
 
@@ -29,10 +30,11 @@ def init():
 
     zoom = 1.0
     filled = 0
+    texID = skybox.loadImage('skybox.jpg')
 
     height_map = landscape.height_map('map.bmp', 0.2)
 
-    ballPOS = Vector(0, 0, height_map[0][0])
+    ballPOS = Vector(64, 64, height_map[64][64]+5)
     ballDIR = Vector(0.7, 0.7, 0)
     ball_angle_counter = 0
 
@@ -138,8 +140,15 @@ def draw(*args, **kwargs):
     glScaled(zoom, zoom, zoom)
 
     glPushMatrix()
+    glColor3f(3, 1, 1)
+    glBindTexture(GL_TEXTURE_2D, texID)
+    glTranslated(129/2, 129/2, ballPOS.z)
+    glRotated(90, 1, 0, 0)
+    glScaled(65,65,65)
+    skybox.texCube()
+    glPopMatrix()
 
-
+    glPushMatrix()
     glTranslated(ballPOS.x, ballPOS.y, ballPOS.z)
     glRotated(ball_angle_counter*10, 0, 0, 1)
 
@@ -180,8 +189,8 @@ def draw(*args, **kwargs):
     glPopMatrix()
 
     # propeller wings
-    angle_delta += 50
-    if angle_delta >= 500:
+    angle_delta += 60
+    if angle_delta >= 720:
         angle_delta = 0
     glPushMatrix()
     glTranslated(1.015, 1.015, 0)
@@ -281,7 +290,6 @@ def draw(*args, **kwargs):
 
     glPopMatrix()
 
-    # glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
     landscape.draw_landscape(height_map)
 
     glutSwapBuffers()

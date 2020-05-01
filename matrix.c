@@ -1,6 +1,60 @@
 #include "Python.h"
 #include "matrix.h"
-#include "base_matrix.h"
+// #include "base_matrix.h"
+
+static MatrixObject *PyObjectToMatrixObject(PyObject *pMatrix){
+    PyObject *pMatrixSub;
+    PyObject *pItem;
+    Py_ssize_t rows, cols;
+    MatrixObject *initial;
+    int i, j;
+    double item;
+
+    rows = PyList_Size(pMatrix);
+    pMatrixSub = PyList_GetItem(pMatrix, 0);
+    cols = PyList_Size(pMatrixSub);
+
+    initial = c_matrix_allocate(rows, cols);
+    for (i = 0; i < rows; i++) {
+        pMatrixSub = PyList_GetItem(pMatrix, i);
+
+        for (j = 0; j < cols; j++) {
+            pItem = PyList_GetItem(pMatrixSub, j);
+
+            if(!PyFloat_Check(pItem)){
+                PyErr_SetString(PyExc_ValueError, "List items must by float.");
+                return NULL;
+            }
+
+            item = PyFloat_AsDouble(pItem);
+            initial->values[i][j] = item;
+        }
+    }
+
+    return initial;
+}
+
+static PyObject *MatrixObjectToPyObject(MatrixObject* matrix){
+    PyObject *pList, *pSublist;
+    PyObject *pItem;
+    Py_ssize_t rows, cols;
+    int i, j;
+
+    rows = matrix->rows;
+    cols = matrix->columns;
+
+    pList = PyList_New(rows);
+    for (i = 0; i < rows; i++) {
+        pSublist = PyList_New(cols);
+        for (j = 0; j < cols; j++) {
+            pItem = Py_BuildValue("d", matrix->values[i][j]);
+            PyList_SetItem(pSublist, j, pItem);
+        }
+        PyList_SetItem(pList, i, pSublist);
+    }
+
+    return pList;
+}
 
 static PyObject *fill(PyObject *self, PyObject *args){
     PyObject *pValue;
@@ -150,13 +204,7 @@ static PyObject* matrix_add_common(PyObject *self, PyObject *args, int sign){
 }
 
 static PyObject* matrix_transpose(PyObject *self, PyObject *args) {
-    PyObject *pMatrix;
-    PyObject *pMatrixSub;
-    PyObject *pItem;
-    PyObject *pList, *pSublist;
-    Py_ssize_t rows, cols;
-    int i, j;
-    float item;
+    PyObject *pMatrix, *pList;
     MatrixObject *initial, *result;
 
     if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &pMatrix)) {
@@ -164,37 +212,9 @@ static PyObject* matrix_transpose(PyObject *self, PyObject *args) {
         return NULL;
     }
 
-    rows = PyList_Size(pMatrix);
-    pMatrixSub = PyList_GetItem(pMatrix, 0);
-    cols = PyList_Size(pMatrixSub);
-
-    initial = c_matrix_allocate(rows, cols);
-    for (i = 0; i < rows; i++) {
-        pMatrixSub = PyList_GetItem(pMatrix, i);
-
-        for (j = 0; j < cols; j++) {
-            pItem = PyList_GetItem(pMatrixSub, j);
-
-            if(!PyFloat_Check(pItem)){
-                PyErr_SetString(PyExc_ValueError, "List items must by float.");
-                return NULL;
-            }
-
-            item = PyFloat_AsDouble(pItem);
-            initial->values[i][j] = item;
-        }
-    }
+    initial = PyObjectToMatrixObject(pMatrix);
     result = c_matrix_transpose(initial);
-
-    pList = PyList_New(rows);
-    for (i = 0; i < rows; i++) {
-        pSublist = PyList_New(cols);
-        for (j = 0; j < cols; j++) {
-            pItem = Py_BuildValue("d", result->values[i][j]);
-            PyList_SetItem(pSublist, j, pItem);
-        }
-        PyList_SetItem(pList, i, pSublist);
-    }
+    pList = MatrixObjectToPyObject(result);
 
     c_matrix_deallocate(initial);
     c_matrix_deallocate(result);

@@ -1,5 +1,3 @@
-#include "Python.h"
-
 #define MAX_c_matrix_SIZE = 256;
 
 /*
@@ -22,12 +20,12 @@
  * values: 2-dimensional array of double values in matrix
  */
 typedef struct MatrixObject{
-    PyObject_HEAD;
     int rows;
     int columns;
     double **values;
 } MatrixObject;
 
+double RandomReal(double low, double high);
 MatrixObject *c_matrix_allocate(int rows, int columns);
 void c_matrix_deallocate(MatrixObject *matrix);
 void c_matrix_str(MatrixObject *matrix);

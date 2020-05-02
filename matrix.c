@@ -11,7 +11,7 @@
 static MatrixObject *PyObjectToMatrixObject(PyObject *pMatrix){
     PyObject *pMatrixSub;
     PyObject *pItem;
-    Py_ssize_t rows, cols;
+    Py_ssize_t rows, cols, tempCols;
     MatrixObject *matrix;
     int i, j;
     double item;
@@ -26,6 +26,13 @@ static MatrixObject *PyObjectToMatrixObject(PyObject *pMatrix){
     for (i = 0; i < rows; i++) {
         // get i_th row
         pMatrixSub = PyList_GetItem(pMatrix, i);
+        tempCols = PyList_Size(pMatrixSub);
+
+        // check dimensions
+        if(tempCols != cols){
+            PyErr_SetString(PyExc_ValueError, "Wrong dimensions!");
+            return NULL;
+        }
 
         for (j = 0; j < cols; j++) {
             // get pMatrix[i][j]
@@ -182,6 +189,11 @@ static PyObject* matrix_add(PyObject *self, PyObject *args){
 
     matrix1 = PyObjectToMatrixObject(pMatrix1);
     matrix2 = PyObjectToMatrixObject(pMatrix2);
+    if ((matrix1->rows != matrix2->rows) || (matrix1->columns != matrix2->columns)) {
+        PyErr_SetString(PyExc_TypeError, "Wrong dimensions!");
+        return NULL;
+    }
+
     result = c_matrix_add(matrix1, matrix2);
     pList = MatrixObjectToPyObject(result);
 
@@ -211,6 +223,10 @@ static PyObject* matrix_sub(PyObject *self, PyObject *args){
 
     matrix1 = PyObjectToMatrixObject(pMatrix1);
     matrix2 = PyObjectToMatrixObject(pMatrix2);
+    if ((matrix1->rows != matrix2->rows) || (matrix1->columns != matrix2->columns)) {
+        PyErr_SetString(PyExc_TypeError, "Wrong dimensions!");
+        return NULL;
+    }
     result = c_matrix_sub(matrix1, matrix2);
     pList = MatrixObjectToPyObject(result);
 
@@ -247,6 +263,92 @@ static PyObject* matrix_transpose(PyObject *self, PyObject *args) {
     return pList;
 }
 
+/*
+ * Function: mult
+ * --------------
+ * multiply PyLists by float
+ *
+ * returns: PyList
+ */
+static PyObject *matrix_mult(PyObject *self, PyObject *args){
+    MatrixObject *initial, *result;
+    PyObject *pMatrix, *pList;
+    double value;
+
+    // check parameters
+    if (!PyArg_ParseTuple(args, "O!d", &PyList_Type, &pMatrix, &value)) {
+        PyErr_SetString(PyExc_TypeError, "Parameters must be (list, float).");
+        return NULL;
+    }
+
+    initial = PyObjectToMatrixObject(pMatrix);
+    result = c_matrix_mult(initial, value);
+    pList = MatrixObjectToPyObject(result);
+
+    c_matrix_deallocate(initial);
+    c_matrix_deallocate(result);
+
+    return pList;
+}
+
+/*
+ * Function: negative
+ * ------------------
+ * multiply every element of the PyList by -1
+ *
+ * returns: PyList
+ */
+static PyObject *matrix_negative(PyObject *self, PyObject *args){
+    MatrixObject *initial, *result;
+    PyObject *pMatrix, *pList;
+
+    // check parameters
+    if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &pMatrix)) {
+        PyErr_SetString(PyExc_TypeError, "Parameter must be (list).");
+        return NULL;
+    }
+
+    initial = PyObjectToMatrixObject(pMatrix);
+    result = c_matrix_negative(initial);
+    pList = MatrixObjectToPyObject(result);
+
+    c_matrix_deallocate(initial);
+    c_matrix_deallocate(result);
+
+    return pList;
+}
+
+/*
+ * Function: dot
+ * -------------------
+ * PyList1.PyList2
+ *
+ * returns: PyList
+ */
+static PyObject* matrix_dot(PyObject *self, PyObject *args){
+    PyObject *pMatrix1, *pMatrix2;
+    MatrixObject *matrix1, *matrix2;
+    MatrixObject *result;
+    PyObject *pList;
+
+    // check parameters
+    if (!PyArg_ParseTuple(args, "O!O!", &PyList_Type, &pMatrix1, &PyList_Type, &pMatrix2)) {
+        PyErr_SetString(PyExc_TypeError, "Parameters must be (list, list).");
+        return NULL;
+    }
+
+    matrix1 = PyObjectToMatrixObject(pMatrix1);
+    matrix2 = PyObjectToMatrixObject(pMatrix2);
+    if (matrix1->columns != matrix2->rows) {
+        PyErr_SetString(PyExc_TypeError, "Wrong dimensions!");
+        return NULL;
+    }
+    result = c_matrix_dot(matrix1, matrix2);
+    pList = MatrixObjectToPyObject(result);
+
+    return pList;
+}
+
 static PyMethodDef MatrixMethods[] = {
     //{"name of function", function, type of args, doc string}
     {"fill", (PyCFunction)fill, METH_VARARGS,
@@ -261,6 +363,12 @@ static PyMethodDef MatrixMethods[] = {
      "Subtracts one matrix from another"},
     {"transpose", (PyCFunction)matrix_transpose, METH_VARARGS,
      "Transposes matrix"},
+    {"mult", (PyCFunction)matrix_mult, METH_VARARGS,
+     "Mult matrix by the number"},
+    {"negative", (PyCFunction)matrix_negative, METH_VARARGS,
+     "Mult matrix by -1"},
+    {"dot", (PyCFunction)matrix_dot, METH_VARARGS,
+     "Dot product of two matrixes"},
     {NULL, NULL, 0, NULL}
 };
 

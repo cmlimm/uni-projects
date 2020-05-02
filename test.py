@@ -32,5 +32,18 @@ class TestSequenceFunctions(unittest.TestCase):
         a = [[1.0, 2.0],[3.0, 4.0]]
         self.assertEqual(transpose(a), [[1.0, 3.0],[2.0, 4.0]])
 
+    def test_mult(self):
+        a = [[1.0, 2.0],[3.0, 4.0]]
+        self.assertEqual(mult(a, 2.0), [[2.0, 4.0],[6.0, 8.0]])
+
+    def test_negative(self):
+        a = [[1.0, 2.0],[3.0, 4.0]]
+        self.assertEqual(negative(a), [[-1.0, -2.0],[-3.0, -4.0]])
+
+    def test_dot(self):
+        a = [[1.0, 2.0],[3.0, 4.0]]
+        b = [[2.0, 3.0],[4.0, 5.0]]
+        self.assertEqual(dot(a, b), [[10.0, 13.0],[22.0, 29.0]])
+
 if __name__ == '__main__':
     unittest.main()

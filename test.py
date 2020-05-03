@@ -51,7 +51,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_transpose(self):
         a = [[1.0, 2.0],[3.0, 4.0]]
-        self.assertEqual(transpose(a), [[1.0, 3.0],[2.0, 4.0]])
+        self.assertEqual(transpose(a), [[1.0, 2.0],[3.0, 4.0]])
 
         a = [["b", 2.0],[3.0, 4.0]]
         self.assertRaises(TypeError, transpose, a)

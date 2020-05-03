@@ -1,0 +1,2 @@
+/Users/cmlimm/.pyenv/versions/3.7.3/lib/python3.7/site-packages/matrixman.cpython-37m-darwin.so
+/Users/cmlimm/.pyenv/versions/3.7.3/lib/python3.7/site-packages/matrixman-0.1-py3.7.egg-info

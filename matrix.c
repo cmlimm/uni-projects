@@ -382,7 +382,7 @@ static PyObject* matrix_dot(PyObject *self, PyObject *args){
     }
 
     if (matrix1->columns != matrix2->rows) {
-        PyErr_SetString(PyExc_ValueError, "Number of columns of the first matrix must be the same as number of columns of the second matrix.");
+        PyErr_SetString(PyExc_ValueError, "Number of columns of the first matrix must be the same as number of rows of the second matrix.");
         return NULL;
     }
     result = c_matrix_dot(matrix1, matrix2);

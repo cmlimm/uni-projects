@@ -30,20 +30,18 @@ static MatrixObject *PyObjectToMatrixObject(PyObject *pMatrix){
 
         // check dimensions
         if(tempCols != cols){
-            PyErr_SetString(PyExc_ValueError, "Wrong dimensions!");
+            PyErr_SetString(PyExc_ValueError, "Matrixes must have the same dimensions.");
             return NULL;
         }
 
         for (j = 0; j < cols; j++) {
             // get pMatrix[i][j]
             pItem = PyList_GetItem(pMatrixSub, j);
-
             if(!PyFloat_Check(pItem)){
-                PyErr_SetString(PyExc_ValueError, "List items must by float.");
+                PyErr_SetString(PyExc_TypeError, "List items must be float.");
                 return NULL;
             }
 
-            // write PyList[i][j] to MatrixObject[i][j]
             item = PyFloat_AsDouble(pItem);
             matrix->values[i][j] = item;
         }
@@ -188,9 +186,18 @@ static PyObject* matrix_add(PyObject *self, PyObject *args){
     }
 
     matrix1 = PyObjectToMatrixObject(pMatrix1);
+    if (matrix1 == NULL && PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        return NULL;
+    }
+
     matrix2 = PyObjectToMatrixObject(pMatrix2);
+    if (matrix2 == NULL && PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        return NULL;
+    }
     if ((matrix1->rows != matrix2->rows) || (matrix1->columns != matrix2->columns)) {
-        PyErr_SetString(PyExc_TypeError, "Wrong dimensions!");
+        PyErr_SetString(PyExc_ValueError, "Matrixes must have the same dimensions.");
         return NULL;
     }
 
@@ -222,9 +229,19 @@ static PyObject* matrix_sub(PyObject *self, PyObject *args){
     }
 
     matrix1 = PyObjectToMatrixObject(pMatrix1);
+    if (matrix1 == NULL && PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        return NULL;
+    }
+
     matrix2 = PyObjectToMatrixObject(pMatrix2);
+    if (matrix2 == NULL && PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        return NULL;
+    }
+
     if ((matrix1->rows != matrix2->rows) || (matrix1->columns != matrix2->columns)) {
-        PyErr_SetString(PyExc_TypeError, "Wrong dimensions!");
+        PyErr_SetString(PyExc_ValueError, "Matrixes must have the same dimensions.");
         return NULL;
     }
     result = c_matrix_sub(matrix1, matrix2);
@@ -255,6 +272,11 @@ static PyObject* matrix_transpose(PyObject *self, PyObject *args) {
     }
 
     initial = PyObjectToMatrixObject(pMatrix);
+    if (initial == NULL && PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        return NULL;
+    }
+
     result = c_matrix_transpose(initial);
     pList = MatrixObjectToPyObject(result);
 
@@ -282,6 +304,11 @@ static PyObject *matrix_mult(PyObject *self, PyObject *args){
     }
 
     initial = PyObjectToMatrixObject(pMatrix);
+    if (initial == NULL && PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        return NULL;
+    }
+
     result = c_matrix_mult(initial, value);
     pList = MatrixObjectToPyObject(result);
 
@@ -309,6 +336,11 @@ static PyObject *matrix_negative(PyObject *self, PyObject *args){
     }
 
     initial = PyObjectToMatrixObject(pMatrix);
+    if (initial == NULL && PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        return NULL;
+    }
+
     result = c_matrix_negative(initial);
     pList = MatrixObjectToPyObject(result);
 
@@ -338,9 +370,19 @@ static PyObject* matrix_dot(PyObject *self, PyObject *args){
     }
 
     matrix1 = PyObjectToMatrixObject(pMatrix1);
+    if (matrix1 == NULL && PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        return NULL;
+    }
+
     matrix2 = PyObjectToMatrixObject(pMatrix2);
+    if (matrix2 == NULL && PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        return NULL;
+    }
+
     if (matrix1->columns != matrix2->rows) {
-        PyErr_SetString(PyExc_TypeError, "Wrong dimensions!");
+        PyErr_SetString(PyExc_ValueError, "Number of columns of the first matrix must be the same as number of columns of the second matrix.");
         return NULL;
     }
     result = c_matrix_dot(matrix1, matrix2);

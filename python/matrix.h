@@ -1,4 +1,4 @@
-#include "base_matrix.h"
+#include "../c/base_matrix.h"
 
 static MatrixObject *PyObjectToMatrixObject(PyObject *pMatrix);
 static PyObject *MatrixObjectToPyObject(MatrixObject* matrix);

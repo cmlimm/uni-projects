@@ -2,7 +2,7 @@ from distutils.core import setup, Extension
 
 modules = Extension(
 	'matrixman',
-	sources = ['matrix.c', 'base_matrix.c']
+	sources = ['python/matrix.c', 'c/base_matrix.c']
 )
 
 setup(

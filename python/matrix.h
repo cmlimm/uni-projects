@@ -1,7 +1,7 @@
 #include "../c/base_matrix.h"
 
-static MatrixObject *PyObjectToMatrixObject(PyObject *pMatrix);
-static PyObject *MatrixObjectToPyObject(MatrixObject* matrix);
+static MatrixObject *PyListToMatrixObject(PyObject *pMatrix);
+static PyObject *MatrixObjectToPyList(MatrixObject* matrix);
 static PyObject* fill(PyObject *self, PyObject *args);
 static PyObject* randfill(PyObject *self, PyObject *args);
 static PyObject* identity(PyObject *self, PyObject *args);

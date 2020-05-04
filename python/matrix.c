@@ -187,13 +187,13 @@ static PyObject* matrix_add(PyObject *self, PyObject *args){
 
     matrix1 = PyObjectToMatrixObject(pMatrix1);
     if (matrix1 == NULL && PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
     matrix2 = PyObjectToMatrixObject(pMatrix2);
     if (matrix2 == NULL && PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
     if ((matrix1->rows != matrix2->rows) || (matrix1->columns != matrix2->columns)) {
@@ -230,13 +230,13 @@ static PyObject* matrix_sub(PyObject *self, PyObject *args){
 
     matrix1 = PyObjectToMatrixObject(pMatrix1);
     if (matrix1 == NULL && PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
     matrix2 = PyObjectToMatrixObject(pMatrix2);
     if (matrix2 == NULL && PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
@@ -273,7 +273,7 @@ static PyObject* matrix_transpose(PyObject *self, PyObject *args) {
 
     initial = PyObjectToMatrixObject(pMatrix);
     if (initial == NULL && PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
@@ -305,7 +305,7 @@ static PyObject *matrix_mult(PyObject *self, PyObject *args){
 
     initial = PyObjectToMatrixObject(pMatrix);
     if (initial == NULL && PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
@@ -337,7 +337,7 @@ static PyObject *matrix_negative(PyObject *self, PyObject *args){
 
     initial = PyObjectToMatrixObject(pMatrix);
     if (initial == NULL && PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
@@ -371,13 +371,13 @@ static PyObject* matrix_dot(PyObject *self, PyObject *args){
 
     matrix1 = PyObjectToMatrixObject(pMatrix1);
     if (matrix1 == NULL && PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
     matrix2 = PyObjectToMatrixObject(pMatrix2);
     if (matrix2 == NULL && PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError, "List items must be float or integer.");
+        PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 

@@ -18,7 +18,7 @@ Run following commands in your command line:
 |**sub**      |list, list            |add([1.0, 2.0], [1.0, 2.0])       |[0.0, 0.0]                  |
 |**transpose**|list                  |transpose([[1.0, 2.0],[3.0, 4.0]])|[[1.0, 2.0], [3.0, 4.0]]    |
 |**mult**     |list, float           |mult([[1.0, 2.0],[3.0, 4.0]], 2.0)|[[2.0, 4.0], [6.0, 8.0]]    |
-|**negative** |list                  |mult([[1.0, 2.0],[3.0, 4.0]])     |[[-1.0, -2.0], [-3.0, -4.0]]|
+|**negative** |list                  |negative([[1.0, 2.0],[3.0, 4.0]]) |[[-1.0, -2.0], [-3.0, -4.0]]|
 |**dot**      |list, list            |dot([[1.0, 2.0]],[[1.0],[2.0]])   |[[5.0]]                     |
 
 ## Uninstall module ##

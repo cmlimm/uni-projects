@@ -2,13 +2,13 @@
 #include "matrix.h"
 
 /*
- * Function: PyObjectToMatrixObject
+ * Function: PyListToMatrixObject
  * --------------------------------
  * converts PyList to MatrixObject
  *
  * returns: MatrixObject
  */
-static MatrixObject *PyObjectToMatrixObject(PyObject *pMatrix){
+static MatrixObject *PyListToMatrixObject(PyObject *pMatrix){
     PyObject *pMatrixSub;
     PyObject *pItem;
     Py_ssize_t rows, cols, tempCols;
@@ -51,13 +51,13 @@ static MatrixObject *PyObjectToMatrixObject(PyObject *pMatrix){
 }
 
 /*
- * Function: MatrixObjectToPyObject
+ * Function: MatrixObjectToPyList
  * --------------------------------
  * converts MatrixObject to PyList
  *
  * returns: PyList
  */
-static PyObject *MatrixObjectToPyObject(MatrixObject* matrix){
+static PyObject *MatrixObjectToPyList(MatrixObject* matrix){
     PyObject *pList, *pSublist;
     PyObject *pItem;
     Py_ssize_t rows, cols;
@@ -104,7 +104,7 @@ static PyObject *fill(PyObject *self, PyObject *args){
     }
 
     matrix = c_matrix_fill(rows, cols, value);
-    pList = MatrixObjectToPyObject(matrix);
+    pList = MatrixObjectToPyList(matrix);
 
     c_matrix_deallocate(matrix);
 
@@ -131,7 +131,7 @@ static PyObject *randfill(PyObject *self, PyObject *args){
     }
 
     matrix = c_matrix_random(rows, cols, min, max);
-    pList = MatrixObjectToPyObject(matrix);
+    pList = MatrixObjectToPyList(matrix);
 
     c_matrix_deallocate(matrix);
 
@@ -157,7 +157,7 @@ static PyObject *identity(PyObject *self, PyObject *args){
     }
 
     matrix = c_matrix_identity(rows);
-    pList = MatrixObjectToPyObject(matrix);
+    pList = MatrixObjectToPyList(matrix);
 
     c_matrix_deallocate(matrix);
 
@@ -185,13 +185,13 @@ static PyObject* matrix_add(PyObject *self, PyObject *args){
         return NULL;
     }
 
-    matrix1 = PyObjectToMatrixObject(pMatrix1);
+    matrix1 = PyListToMatrixObject(pMatrix1);
     if (matrix1 == NULL && PyErr_Occurred()) {
         PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
-    matrix2 = PyObjectToMatrixObject(pMatrix2);
+    matrix2 = PyListToMatrixObject(pMatrix2);
     if (matrix2 == NULL && PyErr_Occurred()) {
         PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
@@ -202,7 +202,7 @@ static PyObject* matrix_add(PyObject *self, PyObject *args){
     }
 
     result = c_matrix_add(matrix1, matrix2);
-    pList = MatrixObjectToPyObject(result);
+    pList = MatrixObjectToPyList(result);
 
     return pList;
 }
@@ -228,13 +228,13 @@ static PyObject* matrix_sub(PyObject *self, PyObject *args){
         return NULL;
     }
 
-    matrix1 = PyObjectToMatrixObject(pMatrix1);
+    matrix1 = PyListToMatrixObject(pMatrix1);
     if (matrix1 == NULL && PyErr_Occurred()) {
         PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
-    matrix2 = PyObjectToMatrixObject(pMatrix2);
+    matrix2 = PyListToMatrixObject(pMatrix2);
     if (matrix2 == NULL && PyErr_Occurred()) {
         PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
@@ -245,7 +245,7 @@ static PyObject* matrix_sub(PyObject *self, PyObject *args){
         return NULL;
     }
     result = c_matrix_sub(matrix1, matrix2);
-    pList = MatrixObjectToPyObject(result);
+    pList = MatrixObjectToPyList(result);
 
     return pList;
 }
@@ -271,14 +271,14 @@ static PyObject* matrix_transpose(PyObject *self, PyObject *args) {
         return NULL;
     }
 
-    initial = PyObjectToMatrixObject(pMatrix);
+    initial = PyListToMatrixObject(pMatrix);
     if (initial == NULL && PyErr_Occurred()) {
         PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
     result = c_matrix_transpose(initial);
-    pList = MatrixObjectToPyObject(result);
+    pList = MatrixObjectToPyList(result);
 
     c_matrix_deallocate(initial);
     c_matrix_deallocate(result);
@@ -303,14 +303,14 @@ static PyObject *matrix_mult(PyObject *self, PyObject *args){
         return NULL;
     }
 
-    initial = PyObjectToMatrixObject(pMatrix);
+    initial = PyListToMatrixObject(pMatrix);
     if (initial == NULL && PyErr_Occurred()) {
         PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
     result = c_matrix_mult(initial, value);
-    pList = MatrixObjectToPyObject(result);
+    pList = MatrixObjectToPyList(result);
 
     c_matrix_deallocate(initial);
     c_matrix_deallocate(result);
@@ -335,14 +335,14 @@ static PyObject *matrix_negative(PyObject *self, PyObject *args){
         return NULL;
     }
 
-    initial = PyObjectToMatrixObject(pMatrix);
+    initial = PyListToMatrixObject(pMatrix);
     if (initial == NULL && PyErr_Occurred()) {
         PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
     result = c_matrix_negative(initial);
-    pList = MatrixObjectToPyObject(result);
+    pList = MatrixObjectToPyList(result);
 
     c_matrix_deallocate(initial);
     c_matrix_deallocate(result);
@@ -369,13 +369,13 @@ static PyObject* matrix_dot(PyObject *self, PyObject *args){
         return NULL;
     }
 
-    matrix1 = PyObjectToMatrixObject(pMatrix1);
+    matrix1 = PyListToMatrixObject(pMatrix1);
     if (matrix1 == NULL && PyErr_Occurred()) {
         PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
     }
 
-    matrix2 = PyObjectToMatrixObject(pMatrix2);
+    matrix2 = PyListToMatrixObject(pMatrix2);
     if (matrix2 == NULL && PyErr_Occurred()) {
         PyErr_SetString(PyExc_TypeError, "List items must be float.");
         return NULL;
@@ -386,7 +386,7 @@ static PyObject* matrix_dot(PyObject *self, PyObject *args){
         return NULL;
     }
     result = c_matrix_dot(matrix1, matrix2);
-    pList = MatrixObjectToPyObject(result);
+    pList = MatrixObjectToPyList(result);
 
     return pList;
 }

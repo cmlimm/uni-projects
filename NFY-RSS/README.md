@@ -1,14 +1,9 @@
 # NEWS FOR YOU RSS
 
 ## Installation ##
-To install required libraries run following commands in your command line:
+To install required libraries run following command in your command line:
 
-    pip install python-telegram-bot
-    pip install bs4
-    pip install feedparser
-    pip install nltk
-    pip install langcodes
-    pip install langdetect
+    pip install python-telegram-bot bs4 feedparser nltk langcodes langdetect
     
 Then open python shell and run these commands:
 ```python

@@ -47,7 +47,7 @@ component(graph)
 
 Результат:
 
-    2.22 ms ± 252 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+    1.87 ms ± 161 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
 
 Используем cython и посмотрим, что получилось.
 ![cython](cython.png)
@@ -59,6 +59,6 @@ component(graph)
 
 Результат:
 
-    608 µs ± 10.8 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+    677 µs ± 24.7 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
     
-Получили увеличение скорости в 3.65 раз
+Получили увеличение скорости в 2.8 раз

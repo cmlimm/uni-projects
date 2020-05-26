@@ -18,9 +18,9 @@ def init():
     glClearColor(1.0, 1.0, 1.0, 1.0)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(90, window_width / window_height, 0.1, 1000)
+    gluPerspective(90, window_width / window_height, 0.1, 10000)
 
-    global texID, angle_delta, anglex, angley, anglez, zoom, filled, height_map, camPOS, camDIR, camUP, ballPOS, ballDIR, ball_angle_counter
+    global min_h, max_h, skyboxID, angle_delta, anglex, angley, anglez, zoom, filled, height_map, camPOS, camDIR, camUP, ballPOS, ballDIR, ball_angle_counter, num
 
     angle_delta = 0
 
@@ -30,17 +30,29 @@ def init():
 
     zoom = 1.0
     filled = 0
-    texID = skybox.loadImage('skybox.jpg')
+    skyboxID = skybox.loadImage('skybox.jpg')
 
-    height_map = landscape.height_map('map.bmp', 0.2)
+    height_map = landscape.height_map('map3.bmp', 0.2)
+    min_h = min([min(r) for r in height_map])
+    max_h = max([max(r) for r in height_map])
 
-    ballPOS = Vector(64, 64, height_map[64][64]+5)
+    ballPOS = Vector(129/2, 129/2, height_map[64][64]+5)
     ballDIR = Vector(0.7, 0.7, 0)
     ball_angle_counter = 0
 
-    camPOS = ballPOS.add(Vector(-2, -2, 1.5))
-    camDIR = Vector(0.7, 0.7, 0)
+    camPOS = ballPOS.add(Vector(0, 0, 3)).sub(ballDIR.mult(3))
+    camUP = Vector(0, 0, 1).cross(ballDIR).cross(Vector(0, 0, 1).sub(ballDIR))
     camUP = Vector(0, 0, 1)
+
+    num = glGenLists(1)
+    glNewList(num, GL_COMPILE)
+    glEnable(GL_TEXTURE_2D)
+    tileID = skybox.loadImage('tile.jpg')
+    glBindTexture(GL_TEXTURE_2D, tileID)
+    glColor3f(1, 1, 1)
+    landscape.draw_landscape(height_map)
+    glDisable(GL_TEXTURE_2D)
+    glEndList()
 
 def keyboardkeys(key, x, y):
     global anglex, angley, anglez, zoom, filled, camPOS, camDIR, camUP
@@ -55,68 +67,47 @@ def keyboardkeys(key, x, y):
     if key == b'e':
         angley -= 5
     if key == b'a':
-        anglez += 5
-    if key == b'd':
         anglez -= 5
+    if key == b'd':
+        anglez += 5
     if key == b'-':
         zoom /= 1.1
     if key == b'=':
         zoom *= 1.1
     if key == b' ':
         filled = 1 - filled
-    if key == b'i':
-        camPOS = camPOS.add(camDIR.mult(0.5))
-    if key == b'k':
-        camPOS = camPOS.sub(camDIR.mult(0.5))
-    if key == b'l':
-        rotM = Matrix.rotation_matrix(camUP, 3.14/18)
-        camDIR = rotM.mult_vector(camDIR)
-    if key == b'j':
-        rotM = Matrix.rotation_matrix(camUP, -3.14/18)
-        camDIR = rotM.mult_vector(camDIR)
-    if key == b'o':
-        rotM = Matrix.rotation_matrix(camDIR, 3.14/18)
-        camUP = rotM.mult_vector(camUP)
-    if key == b'u':
-        rotM = Matrix.rotation_matrix(camDIR, -3.14/18)
-        camUP = rotM.mult_vector(camUP)
-    if key == b'y':
-        cross = camDIR.cross(camUP)
-        rotM = Matrix.rotation_matrix(cross, 3.14/18)
-        camUP = rotM.mult_vector(camUP)
-        camDIR = rotM.mult_vector(camDIR)
-    if key == b'h':
-        cross = camDIR.cross(camUP)
-        rotM = Matrix.rotation_matrix(cross, -3.14/18)
-        camUP = rotM.mult_vector(camUP)
-        camDIR = rotM.mult_vector(camDIR)
 
     glutPostRedisplay()
 
+def update_camera():
+    global camPOS, campUP
+    camPOS = ballPOS.add(Vector(0, 0, 3)).sub(ballDIR.mult(3))
+    camUP = Vector(0, 0, 1).cross(ballDIR).cross(Vector(0, 0, 1).sub(ballDIR))
+
 def specialkeys(key, x, y):
-    global ballDIR, ballPOS, camPOS, ball_angle_counter
+    global ballDIR, ballPOS, ball_angle_counter
     if key == GLUT_KEY_UP:
         ballPOS = ballPOS.add(ballDIR)
-        ballPOS.z = utils.getz(ballPOS.x, ballPOS.y, height_map) + 3
-        camPOS = camPOS.add(ballDIR)
-        camPOS.z = ballPOS.z + 1.5
+        ballPOS.z = utils.getz(ballPOS.x, ballPOS.y, height_map)[0] + 3
+        update_camera()
     if key == GLUT_KEY_DOWN:
         ballPOS = ballPOS.sub(ballDIR)
-        ballPOS.z = utils.getz(ballPOS.x, ballPOS.y, height_map) + 3
-        camPOS = camPOS.sub(ballDIR)
-        camPOS.z = ballPOS.z + 1.5
+        ballPOS.z = utils.getz(ballPOS.x, ballPOS.y, height_map)[0] + 3
+        update_camera()
     if key == GLUT_KEY_LEFT:
         rotM = Matrix.rotation_matrix(Vector(0, 0, 1), -3.14/18)
         ballDIR = rotM.mult_vector(ballDIR)
         ball_angle_counter += 1
         if ball_angle_counter == 36 or ball_angle_counter == -36:
             ball_angle_counter = 0
+        update_camera()
     if key == GLUT_KEY_RIGHT:
         rotM = Matrix.rotation_matrix(Vector(0, 0, 1), 3.14/18)
         ballDIR = rotM.mult_vector(ballDIR)
         ball_angle_counter -= 1
         if ball_angle_counter == 36 or ball_angle_counter == -36:
             ball_angle_counter = 0
+        update_camera()
 
     glutPostRedisplay()
 
@@ -124,13 +115,13 @@ def draw(*args, **kwargs):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    global angle_delta, anglex, angley, anglez, zoom, filled, texID, camPOS, camDIR, camUP, ballPOS, ballDIR, ball_angle_counter
+    global anglex, angley, anglez, zoom, filled, skyboxID, camPOS, camUP, ballPOS, ball_angle_counter, angle_delta
     gluLookAt(camPOS.x, camPOS.y, camPOS.z,                                  # camera position
-              camPOS.x + camDIR.x, camPOS.y + camDIR.y, camPOS.z + camDIR.z, # point camera is looking at
+              ballPOS.x, ballPOS.y, ballPOS.z+2,                               # point camera is looking at
               camUP.x, camUP.y, camUP.z)                                     # up direction of camera
-    glRotated(anglex,1,0,0)
-    glRotated(angley,0,1,0)
-    glRotated(anglez,0,0,1)
+    glRotated(anglex, 1, 0, 0)
+    glRotated(angley, 0, 1, 0)
+    glRotated(anglez, 0, 0, 1)
 
     if filled == 1:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
@@ -139,14 +130,16 @@ def draw(*args, **kwargs):
 
     glScaled(zoom, zoom, zoom)
 
+    glEnable(GL_TEXTURE_2D)
     glPushMatrix()
-    glColor3f(3, 1, 1)
-    glBindTexture(GL_TEXTURE_2D, texID)
-    glTranslated(129/2, 129/2, ballPOS.z)
+    glColor3f(1, 1, 1)
+    glBindTexture(GL_TEXTURE_2D, skyboxID)
+    glTranslated(ballPOS.x, ballPOS.y, ballPOS.z)
     glRotated(90, 1, 0, 0)
-    glScaled(65,65,65)
+    glScaled(max_h, max_h, max_h)
     skybox.texCube()
     glPopMatrix()
+    glDisable(GL_TEXTURE_2D)
 
     glPushMatrix()
     glTranslated(ballPOS.x, ballPOS.y, ballPOS.z)
@@ -189,8 +182,8 @@ def draw(*args, **kwargs):
     glPopMatrix()
 
     # propeller wings
-    angle_delta += 60
-    if angle_delta >= 720:
+    angle_delta += 20
+    if angle_delta >= 1440:
         angle_delta = 0
     glPushMatrix()
     glTranslated(1.015, 1.015, 0)
@@ -290,7 +283,7 @@ def draw(*args, **kwargs):
 
     glPopMatrix()
 
-    landscape.draw_landscape(height_map)
+    glCallList(num)
 
     glutSwapBuffers()
     glutPostRedisplay()

@@ -68,4 +68,4 @@ def getz(x, y, H):
     d = - n.dot(v_1)
 
     z = - (n.x*x + n.y*y + d)/n.z
-    return z
+    return z, n

@@ -2,6 +2,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from PIL import Image, ImageDraw
+import skybox
 
 def height_map(filename, scale):
     """
@@ -19,22 +20,23 @@ def height_map(filename, scale):
             array[x][y] = round(pix[x, y][0]*scale, 3)
     return array
 
-def draw_landscape(height_map):
+def draw_landscape(height_map, ids, max_h):
     n = len(height_map)
     m = len(height_map[0])
-
+    hprev = height_map[1][1]
+    glBindTexture(GL_TEXTURE_2D, ids[0])
     for y in range(1, n, 2):
         for x in range(1, m, 2):
-            glBegin(GL_TRIANGLE_FAN)
             h = height_map[x][y]
-            # if h > 40:
-            #     glColor3f(0.8*h/50, 0.8*h/50, 0.8*h/50)
-            # elif h > 30:
-            #     glColor3f(0.5*h/40, 0.5*h/40, 0.5*h/40)
-            # elif h > 10:
-            #     glColor3f(0, 0.6*h/30, 0)
-            # else:
-            #     glColor3f(0, 0.2*h/10, 0)
+            glColor3f(1, 1, 1)
+            if h-45<=0.001 and 45-hprev<=0.001:
+                glBindTexture(GL_TEXTURE_2D, ids[0])
+            elif 45-h<=0.001 and hprev-45<=0.001:
+                glBindTexture(GL_TEXTURE_2D, ids[1])
+            hprev = h
+            glBegin(GL_TRIANGLE_FAN)
+            glColor3f(0.95*h/max_h, 0.95*h/max_h, 0.95*h/max_h)
+
             k = 10
 
             xTex = x%k/k

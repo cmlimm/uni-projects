@@ -7,8 +7,19 @@ def getz(x, y, H):
     that matches landscape made of triangles (look for Perlin noise or generating
     landscape from image)
     """
+    n = len(H)
+    x, y = abs(x), abs(y)
     x_0, y_0 = trunc(x), trunc(y)
     x_m, y_m = x - x_0, y - y_0
+
+    # in case we are out of bounds
+    # for infinite landscape
+    x = x - n*(x_0//(n - 1))
+    y = y - n*(y_0//(n - 1))
+    x_0 = x_0 % (n - 1)
+    y_0 = y_0 % (n - 1)
+    x_0_p = (x_0 + 1) % (n - 1)
+    y_0_p = (y_0 + 1) % (n - 1)
 
     # There is two types of squares
     # *********     *********
@@ -41,31 +52,102 @@ def getz(x, y, H):
 
     # now we determine vertecies of triangle that contains our point
     if square == 'positive' and triangle == 'upper':
-        v_1 = Vector(x_0,     y_0 + 1, H[x_0][y_0 + 1])
+        v_1 = Vector(x_0,     y_0_p, H[x_0][y_0_p])
         v_2 = Vector(x_0,     y_0,     H[x_0][y_0])
-        v_3 = Vector(x_0 + 1, y_0 + 1, H[x_0 + 1][y_0 + 1])
+        v_3 = Vector(x_0_p, y_0_p, H[x_0_p][y_0_p])
 
     if square == 'positive' and triangle == 'lower':
-        v_1 = Vector(x_0 + 1, y_0,     H[x_0 + 1][y_0])
-        v_2 = Vector(x_0 + 1, y_0 + 1, H[x_0 + 1][y_0 + 1])
+        v_1 = Vector(x_0_p, y_0,     H[x_0_p][y_0])
+        v_2 = Vector(x_0_p, y_0_p, H[x_0_p][y_0_p])
         v_3 = Vector(x_0,     y_0,     H[x_0][y_0])
 
     if square == 'negative' and triangle == 'upper':
-        v_1 = Vector(x_0 + 1, y_0 + 1, H[x_0 + 1][y_0 + 1])
-        v_2 = Vector(x_0,     y_0 + 1, H[x_0][y_0 + 1])
-        v_3 = Vector(x_0 + 1, y_0,     H[x_0 + 1][y_0])
+        v_1 = Vector(x_0_p, y_0_p, H[x_0_p][y_0_p])
+        v_2 = Vector(x_0,     y_0_p, H[x_0][y_0_p])
+        v_3 = Vector(x_0_p, y_0,     H[x_0_p][y_0])
 
     if square == 'negative' and triangle == 'lower':
         v_1 = Vector(x_0,     y_0,     H[x_0][y_0])
-        v_2 = Vector(x_0,     y_0 + 1, H[x_0][y_0 + 1])
-        v_3 = Vector(x_0 + 1, y_0,     H[x_0 + 1][y_0])
+        v_2 = Vector(x_0,     y_0_p, H[x_0][y_0_p])
+        v_3 = Vector(x_0_p, y_0,     H[x_0_p][y_0])
 
     # in this section of code we determine equation of the plane
     # that contains triangle
     v_12 = v_2.sub(v_1)
     v_13 = v_3.sub(v_1)
-    n = v_12.cross(v_13)
-    d = - n.dot(v_1)
+    normal = v_12.cross(v_13)
+    d = - normal.dot(v_1)
 
-    z = - (n.x*x + n.y*y + d)/n.z
-    return z, n
+    z = - (normal.x*x + normal.y*y + d)/normal.z
+    return z
+
+def sign(x):
+        if x > 0:
+                return 1
+        if x < 0:
+                return -1
+        return 0
+
+def isVisible(x1, y1, x2, y2, height_map):
+    points = []
+    oldx1 = x1
+    oldx2 = x2
+    oldy1 = y1
+    oldy2 = y2
+    flag = True
+
+    x1 = ceil(x1)
+    x2 = ceil(x2)
+    y1 = ceil(y1)
+    y2 = ceil(y2)
+
+    dX = abs(x2 - x1)
+    dY = abs(y2 - y1)
+    if dX >= dY:
+        if x1 > x2:
+            x1, x2 = x2, x1
+            y1, y2 = y2, y1
+            flag = False
+        err = 0
+        dErr = dY
+        y = y1
+        dirY = sign(y2 - y1)
+        for x in range(x1, x2 + 1):
+            z = (x-oldx1)*(getz(oldx2, oldy2, height_map)-
+                           getz(oldx1, oldy1, height_map)-10)/(oldx2-oldx1)+getz(oldx1, oldy1, height_map)+10
+            if flag:
+                if x <= oldx2:
+                    if z < height_map[round(x)][round(y)]:
+                        return False
+            else:
+                if x <= oldx1:
+                    if z < height_map[round(x)][round(y)]:
+                        return False
+            err += dErr
+            if err + err >= dX:
+                    y += dirY
+                    err -= dX
+    else:
+        if y1 > y2:
+            x1, x2 = x2, x1
+            y1, y2 = y2, y1
+        err = 0
+        dErr = dX
+        x = x1
+        dirX = sign(x2 - x1)
+        for y in range(y1, y2 + 1):
+            z = (x-oldx1)*(getz(oldx2, oldy2, height_map)-
+                           getz(oldx1, oldy1, height_map)-10)/(oldx2-oldx1)+getz(oldx1, oldy1, height_map)+10
+            if flag:
+                if y <= oldy2:
+                    if z < height_map[round(x)][round(y)]:
+                        return False
+            else:
+                if y <= oldy1:
+                    if z < height_map[round(x)][round(y)]:
+                        return False
+            err += dErr
+            if err + err >= dY:
+                    x += dirX
+                    err -= dY
+    return True

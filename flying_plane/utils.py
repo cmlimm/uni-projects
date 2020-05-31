@@ -1,5 +1,6 @@
 from math import *
 from vector import *
+from time import process_time
 
 def getz(x, y, H):
     """
@@ -7,20 +8,47 @@ def getz(x, y, H):
     that matches landscape made of triangles (look for Perlin noise or generating
     landscape from image)
     """
+    # print("--------")
+    # print(process_time())
+    # print("x, y:", x, y)
     n = len(H)
-    x, y = abs(x), abs(y)
+
+    if x < 0:
+        x = abs(x - n*(x//n))
+    else:
+        x = x - n*(x//n)
+
+    if y < 0:
+        y = abs(y - n*(y//n))
+    else:
+        y = y - n*(y//n)
+
+    x = round(x, 2)
+    y = round(y, 2)
+
     x_0, y_0 = trunc(x), trunc(y)
     x_m, y_m = x - x_0, y - y_0
-
     # in case we are out of bounds
     # for infinite landscape
-    x = x - n*(x_0//(n - 1))
-    y = y - n*(y_0//(n - 1))
-    x_0 = x_0 % (n - 1)
-    y_0 = y_0 % (n - 1)
-    x_0_p = (x_0 + 1) % (n - 1)
-    y_0_p = (y_0 + 1) % (n - 1)
+    x_0 = x_0 % (n-1)
+    y_0 = y_0 % (n-1)
+    x_0_p = (x_0 + 1) % (n-1)
+    y_0_p = (y_0 + 1) % (n-1)
 
+    if x_0_p == 0:
+        x_0 = 0
+        x_0_p = 1
+    if y_0_p == 0:
+        y_0 = 0
+        y_0_p = 1
+
+    if x_0 == 0:
+        x = 0
+    if y_0 == 0:
+        y = 0
+
+    # print("x_0, y_0:", x_0, y_0)
+    # print("x, y:", x, y)
     # There is two types of squares
     # *********     *********
     # *  2   **     **    4 *
@@ -79,6 +107,9 @@ def getz(x, y, H):
     d = - normal.dot(v_1)
 
     z = - (normal.x*x + normal.y*y + d)/normal.z
+    z = round(z, 2)
+    # print("z:", z)
+    # print("--------")
     return z
 
 def sign(x):

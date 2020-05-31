@@ -29,10 +29,11 @@ def draw_landscape(height_map, ids, max_h):
         for x in range(1, m, 2):
             h = height_map[x][y]
             glColor3f(1, 1, 1)
-            if h-45<=0.001 and 45-hprev<=0.001:
-                glBindTexture(GL_TEXTURE_2D, ids[0])
-            elif 45-h<=0.001 and hprev-45<=0.001:
-                glBindTexture(GL_TEXTURE_2D, ids[1])
+            if len(ids) != 1:
+                if h-45<=0.001 and 45-hprev<=0.001:
+                    glBindTexture(GL_TEXTURE_2D, ids[0])
+                elif 45-h<=0.001 and hprev-45<=0.001:
+                    glBindTexture(GL_TEXTURE_2D, ids[1])
             hprev = h
             glBegin(GL_TRIANGLE_FAN)
             glColor3f(0.95*h/max_h, 0.95*h/max_h, 0.95*h/max_h)

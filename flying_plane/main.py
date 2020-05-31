@@ -1,4 +1,5 @@
 from math import *
+from time import process_time
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -9,7 +10,6 @@ import utils
 import landscape
 import objects
 import skybox
-from math import trunc
 
 window_width = 800
 window_height = 600
@@ -20,147 +20,149 @@ def init():
     glClearColor(1.0, 1.0, 1.0, 1.0)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(90, window_width / window_height, 0.1, 10000)
+    gluPerspective(90, window_width / window_height, 0.1, 1000)
 
-    global up_jump, jump, snowman_coord, min_h, max_h, length, skyboxID, angle_delta, filled, height_map, camPOS, camDIR, camUP, ballPOS, ballDIR, ball_angle_counter, landspace_model, landspace_big
+    global min_h, max_h, length, filled
+    global height_map, landspace_model, skybox_model
+    global camPOS, camDIR, camUP, planePOS, planeDIR, plane_angle_counter, angle_delta
+    global plane_force_up, plane_force_fwd
+    global last_time, current_time, delta_time
 
-    angle_delta = 0
+    last_time = process_time()
 
-    filled = 0
-    skyboxID = skybox.loadImage('skybox.jpg')
-
-    height_map = landscape.height_map('map4.bmp', 0.3)
+    height_map = landscape.height_map('map2.bmp', 0.3)
     min_h = min([min(r) for r in height_map])
     max_h = max([max(r) for r in height_map])
     length = len(height_map)
 
-    ballPOS = Vector(length/2, length/2, height_map[round(length/2)][round(length/2)]+10)
-    ballDIR = Vector(1, 1, 0).norm()
-    ball_angle_counter = 0
-    jump = 0
-    up_jump = True
+    planePOS = Vector(length/2, length/2, height_map[round(length/2)][round(length/2)]+2)
+    planeDIR = Vector(1, 1, 0).norm()
+    plane_angle_counter = 0
+    angle_delta = 0
+    plane_force_up = 0
+    plane_force_fwd = 0
 
-    camPOS = ballPOS.add(Vector(0, 0, 3)).sub(ballDIR.mult(3))
-    # camUP = Vector(0, 0, 1).cross(ballDIR).norm().cross(Vector(0, 0, 1).sub(ballDIR)).norm()
+    camPOS = planePOS.add(Vector(0, 0, 3)).sub(planeDIR.mult(3))
     camUP = Vector(0, 0, 1)
+
+    tileID = skybox.loadImage('tile.jpg')
+    skyboxID = skybox.loadImage('skybox.jpg')
 
     landspace_model = glGenLists(1)
     glNewList(landspace_model, GL_COMPILE)
     glEnable(GL_TEXTURE_2D)
-    tileID = skybox.loadImage('tile.jpg')
-    # tileYellowID = skybox.loadImage('tileYellow.jpg')
-    tileGrayID = skybox.loadImage('tileGray.jpg')
-    landscape.draw_landscape(height_map, [tileID, tileGrayID], max_h)
-    # landscape.draw_landscape(height_map, [tileID], max_h)
+    landscape.draw_landscape(height_map, [tileID], max_h)
+    glTranslated(length - 2.5, 0, 0)
+    landscape.draw_landscape(height_map, [tileID], max_h)
+    glTranslated(0, -length + 2.5, 0)
+    landscape.draw_landscape(height_map, [tileID], max_h)
+    glTranslated(-length + 2.5, 0, 0)
+    landscape.draw_landscape(height_map, [tileID], max_h)
+    glTranslated(-length + 2.5, 0, 0)
+    landscape.draw_landscape(height_map, [tileID], max_h)
+    glTranslated(0, length - 2.5, 0)
+    landscape.draw_landscape(height_map, [tileID], max_h)
+    glTranslated(0, length - 2.5, 0)
+    landscape.draw_landscape(height_map, [tileID], max_h)
+    glTranslated(length - 2.5, 0, 0)
+    landscape.draw_landscape(height_map, [tileID], max_h)
+    glTranslated(length - 2.5, 0, 0)
+    landscape.draw_landscape(height_map, [tileID], max_h)
     glDisable(GL_TEXTURE_2D)
     glEndList()
 
-    # landspace_big = glGenLists(1)
-    # glNewList(landspace_big, GL_COMPILE)
-    # glPushMatrix()
-    # glCallList(landspace_model)
-    # glTranslated(length-1, 0, 0)
-    # glCallList(landspace_model)
-    # glPopMatrix()
-    # glEndList()
+    skybox_model = glGenLists(1)
+    glNewList(skybox_model, GL_COMPILE)
+    glEnable(GL_TEXTURE_2D)
+    glColor3f(1, 1, 1)
+    glBindTexture(GL_TEXTURE_2D, skyboxID)
+    glRotated(90, 1, 0, 0)
+    glScaled(length, length, length)
+    skybox.texCube()
+    glDisable(GL_TEXTURE_2D)
+    glEndList()
 
     pygame.init()
 
 def keyboardkeys(key, x, y):
-    global filled
-    if key == b' ':
-        filled = 1 - filled
+    if key == b's':
+        pass
     glutPostRedisplay()
 
 def update_camera():
     global camPOS, campUP
-    camPOS = ballPOS.add(Vector(0, 0, 3)).sub(ballDIR.mult(3))
-    camUP = Vector(0, 0, 1).cross(ballDIR).norm().cross(Vector(0, 0, 1).sub(ballDIR)).norm()
+    camPOS = planePOS.add(Vector(0, 0, 3)).sub(planeDIR.mult(3))
+    camUP = Vector(0, 0, 1).cross(planeDIR).norm().cross(Vector(0, 0, 1).sub(planeDIR)).norm()
 
 def keyboard():
-    global ballDIR, ballPOS, ball_angle_counter
+    global planeDIR, planePOS, plane_angle_counter, plane_force_up, plane_force_fwd
 
     pygame.event.get()
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_UP]:
-        ballPOS = ballPOS.add(ballDIR.mult(1))
-        ballPOS.z = utils.getz(ballPOS.x, ballPOS.y, height_map) + 10
-        update_camera()
-    if keys[pygame.K_DOWN]:
-        ballPOS = ballPOS.sub(ballDIR.mult(1))
-        ballPOS.z = utils.getz(ballPOS.x, ballPOS.y, height_map) + 10
-        update_camera()
+
     if keys[pygame.K_LEFT]:
         rotM = Matrix.rotation_matrix(Vector(0, 0, 1), -3.14/36)
-        ballDIR = rotM.mult_vector(ballDIR).norm()
-        ball_angle_counter += 0.5
-        if ball_angle_counter == 36 or ball_angle_counter == -36:
-            ball_angle_counter = 0
+        planeDIR = rotM.mult_vector(planeDIR).norm()
+        plane_angle_counter += 0.5
+        if plane_angle_counter == 36 or plane_angle_counter == -36:
+            plane_angle_counter = 0
         update_camera()
     if keys[pygame.K_RIGHT]:
         rotM = Matrix.rotation_matrix(Vector(0, 0, 1), 3.14/36)
-        ballDIR = rotM.mult_vector(ballDIR).norm()
-        ball_angle_counter -= 0.5
-        if ball_angle_counter == 36 or ball_angle_counter == -36:
-            ball_angle_counter = 0
+        planeDIR = rotM.mult_vector(planeDIR).norm()
+        plane_angle_counter -= 0.5
+        if plane_angle_counter == 36 or plane_angle_counter == -36:
+            plane_angle_counter = 0
         update_camera()
+
+    if plane_force_fwd > 20:
+        plane_force_up = plane_force_fwd - 20
+    else:
+        plane_force_up = 0
+
+    if keys[pygame.K_UP]:
+        if plane_force_fwd + 0.25 <= 50:
+            plane_force_fwd += 0.25
+    else:
+        if plane_force_fwd - 0.25 >= 0:
+            plane_force_fwd -= 0.25
+
+    if keys[pygame.K_DOWN]:
+        if plane_force_fwd - 0.25 >= 0:
+            plane_force_fwd -= 0.25
+
+    planePOS = planePOS.add(planeDIR.mult(plane_force_fwd/25))
+    zero_level = utils.getz(round(planePOS.x, 2), round(planePOS.y, 2), height_map) + 2
+    planePOS.z = zero_level + plane_force_up
+    update_camera()
+
     if keys[pygame.K_ESCAPE]:
         sys.exit(0)
 
-
 def draw(*args, **kwargs):
+    global angle_delta, last_time, current_time, delta_time
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    global angle_delta, jump, up_jump
-    gluLookAt(camPOS.x, camPOS.y, camPOS.z,     # camera position
-              ballPOS.x, ballPOS.y, ballPOS.z+2,# point camera is looking at
-              camUP.x, camUP.y, camUP.z)        # up direction of camera
+    gluLookAt(camPOS.x, camPOS.y, camPOS.z,        # camera position
+              planePOS.x, planePOS.y, planePOS.z+2,# point camera is looking at
+              camUP.x, camUP.y, camUP.z)           # up direction of camera
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
-    if filled == 1:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-    else:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-
-    glEnable(GL_TEXTURE_2D)
     glPushMatrix()
-    glColor3f(1, 1, 1)
-    glBindTexture(GL_TEXTURE_2D, skyboxID)
-    glTranslated(ballPOS.x, ballPOS.y, ballPOS.z)
-    glRotated(90, 1, 0, 0)
-    glScaled(length, length, length)
-    skybox.texCube()
+    glTranslated(planePOS.x, planePOS.y, planePOS.z)
+    glCallList(skybox_model)
     glPopMatrix()
-    glDisable(GL_TEXTURE_2D)
-
-    # if utils.isVisible(ballPOS.x, ballPOS.y, 64, 64, height_map):
-    #     if abs(5 - jump) <= 0.001 or jump > 5:
-    #         up_jump = False
-    #         jump -= 0.05
-    #     elif jump < 5 and up_jump:
-    #         jump += 0.05
-    #     elif jump < 5 and not up_jump:
-    #         if abs(jump) <= 0.001:
-    #             up_jump = True
-    #         else:
-    #             jump -= 0.05
-    # else:
-    #     jump = 0
-    #
-    # glPushMatrix()
-    # glTranslated(64, 64, height_map[64][64]+jump)
-    # objects.snowman()
-    # glPopMatrix()
 
     glPushMatrix()
-    glTranslated(ballPOS.x, ballPOS.y, ballPOS.z)
-    glRotated(ball_angle_counter*10, 0, 0, 1)
-    # coef=utils.getz(ballPOS.x, ballPOS.y, height_map)/max_h
+    glTranslated(planePOS.x, planePOS.y, planePOS.z)
+    glRotated(plane_angle_counter*10, 0, 0, 1)
     objects.plane()
 
     # propeller
-    angle_delta += 20
-    if angle_delta >= 1440:
+    angle_delta += 20*plane_force_fwd/50
+    if angle_delta >= 720:
         angle_delta = 0
     glPushMatrix()
     glTranslated(1.015, 1.015, 0)
@@ -174,13 +176,15 @@ def draw(*args, **kwargs):
     glPopMatrix()
 
     glPushMatrix()
-    landscape_x = length*(trunc(ballPOS.x)//length)
-    landscape_y = length*(trunc(ballPOS.y)//length)
+    landscape_x = length*(trunc(planePOS.x)//length)
+    landscape_y = length*(trunc(planePOS.y)//length)
     glTranslated(landscape_x, landscape_y, 0)
-    # glCallList(landspace_model)
-    # glTranslated(length-1, 0, 0)
     glCallList(landspace_model)
     glPopMatrix()
+
+    current_time = process_time()
+    delta_time = round((current_time - last_time)*70, 2)
+    last_time = current_time
     keyboard()
     glutSwapBuffers()
     glutPostRedisplay()

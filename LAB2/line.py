@@ -14,6 +14,7 @@ def sign(x): # знак числа
         if x < 0:
                 return -1
         return 0
+
 def line(x1, y1, x2, y2, draw):  # рисуем линию из точки (x1,y1) в точку (x2,y2)
         dX = abs(x2 - x1)
         dY = abs(y2 - y1)
@@ -45,7 +46,7 @@ def line(x1, y1, x2, y2, draw):  # рисуем линию из точки (x1,y
                     if err + err >= dY:
                             x += dirX
                             err -= dY
-                            
+
 line(0,0,width-1,height-1, draw)
 line(0,height-1,width-1,0, draw)
 line(width//2,0,0,height//2, draw)

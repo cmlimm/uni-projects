@@ -8,9 +8,6 @@ def getz(x, y, H):
     that matches landscape made of triangles (look for Perlin noise or generating
     landscape from image)
     """
-    # print("--------")
-    # print(process_time())
-    # print("x, y:", x, y)
     n = len(H)
 
     if x < 0:
@@ -47,8 +44,6 @@ def getz(x, y, H):
     if y_0 == 0:
         y = 0
 
-    # print("x_0, y_0:", x_0, y_0)
-    # print("x, y:", x, y)
     # There is two types of squares
     # *********     *********
     # *  2   **     **    4 *

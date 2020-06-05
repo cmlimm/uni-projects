@@ -106,14 +106,12 @@ def keyboard():
         plane_angle_counter += 0.5
         if plane_angle_counter == 36 or plane_angle_counter == -36:
             plane_angle_counter = 0
-        update_camera()
     if keys[pygame.K_RIGHT]:
         rotM = Matrix.rotation_matrix(Vector(0, 0, 1), 3.14/36)
         planeDIR = rotM.mult_vector(planeDIR).norm()
         plane_angle_counter -= 0.5
         if plane_angle_counter == 36 or plane_angle_counter == -36:
             plane_angle_counter = 0
-        update_camera()
 
     if plane_force_fwd > 20:
         plane_force_up = plane_force_fwd - 20
@@ -131,9 +129,9 @@ def keyboard():
         if plane_force_fwd - 0.25 >= 0:
             plane_force_fwd -= 0.25
 
-    planePOS = planePOS.add(planeDIR.mult(plane_force_fwd/25))
-    zero_level = utils.getz(round(planePOS.x, 2), round(planePOS.y, 2), height_map) + 2
-    planePOS.z = zero_level + plane_force_up
+    planePOS = planePOS.add(planeDIR.mult(plane_force_fwd/50))
+    zero_level = utils.getz(round(planePOS.x, 2), round(planePOS.y, 2), height_map)
+    planePOS.z = zero_level + plane_force_up + 2
     update_camera()
 
     if keys[pygame.K_ESCAPE]:

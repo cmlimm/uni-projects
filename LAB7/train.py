@@ -159,7 +159,6 @@ def draw(*args, **kwargs):
 
     glClearColor(0, 0.4, 0, 1)
     glClear(GL_COLOR_BUFFER_BIT)
-
     glPushMatrix()
     glColor3f(1, 0, 0)
     glScaled(0.5, 0.5, 1)

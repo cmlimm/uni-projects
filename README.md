@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Repository contains my university assignments
 ### DigitalClock
 Desktop alarm written in python using TKinter
@@ -10,4 +9,3 @@ RSS feed integrated with telegram bot
 Labs and hometasks from university python course
 ### spbseu_rating
 University rating site parser integrated with discord bot
->>>>>>> fd1a96afb36a224a948a683db7e0bc052b30087d

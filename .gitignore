@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -132,12 +133,20 @@ dmypy.json
 # Prerequisites
 *.d
 .ipynb_checkpoints
+=======
+# Prerequisites
+*.d
+>>>>>>> matrix_module/master
 
 # Object files
 *.o
 *.ko
 *.obj
 *.elf
+<<<<<<< HEAD
+=======
+*.swp
+>>>>>>> matrix_module/master
 
 # Linker output
 *.ilk
@@ -182,4 +191,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+<<<<<<< HEAD
 >>>>>>> c_homework/master
+=======
+>>>>>>> matrix_module/master

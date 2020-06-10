@@ -25,15 +25,16 @@ def init():
     global min_h, max_h, length, filled
     global height_map, landspace_model, skybox_model
     global camPOS, camDIR, camUP, planePOS, planeDIR, plane_angle_counter, angle_delta
-    global plane_force_up, plane_force_fwd
-    global last_time, current_time, delta_time
-
-    last_time = process_time()
+    global plane_force_up, plane_force_fwd, reached_max_h, fixed_force_up
 
     height_map = landscape.height_map('map2.bmp', 0.3)
     min_h = min([min(r) for r in height_map])
     max_h = max([max(r) for r in height_map])
     length = len(height_map)
+    height_map[0][:] = [min_h for _ in range(length)]
+    height_map[length - 1][:] = [min_h for _ in range(length)]
+    height_map[:][0] = [min_h for _ in range(length)]
+    height_map[:][length - 1] = [min_h for _ in range(length)]
 
     planePOS = Vector(length/2, length/2, height_map[round(length/2)][round(length/2)]+2)
     planeDIR = Vector(1, 1, 0).norm()
@@ -41,33 +42,35 @@ def init():
     angle_delta = 0
     plane_force_up = 0
     plane_force_fwd = 0
+    reached_max_h = False
 
     camPOS = planePOS.add(Vector(0, 0, 3)).sub(planeDIR.mult(3))
     camUP = Vector(0, 0, 1)
 
+    tile_grassID = skybox.loadImage('tile_grass.jpg')
     tileID = skybox.loadImage('tile.jpg')
     skyboxID = skybox.loadImage('skybox.jpg')
 
     landspace_model = glGenLists(1)
     glNewList(landspace_model, GL_COMPILE)
     glEnable(GL_TEXTURE_2D)
-    landscape.draw_landscape(height_map, [tileID], max_h)
-    glTranslated(length - 2.5, 0, 0)
-    landscape.draw_landscape(height_map, [tileID], max_h)
-    glTranslated(0, -length + 2.5, 0)
-    landscape.draw_landscape(height_map, [tileID], max_h)
-    glTranslated(-length + 2.5, 0, 0)
-    landscape.draw_landscape(height_map, [tileID], max_h)
-    glTranslated(-length + 2.5, 0, 0)
-    landscape.draw_landscape(height_map, [tileID], max_h)
-    glTranslated(0, length - 2.5, 0)
-    landscape.draw_landscape(height_map, [tileID], max_h)
-    glTranslated(0, length - 2.5, 0)
-    landscape.draw_landscape(height_map, [tileID], max_h)
-    glTranslated(length - 2.5, 0, 0)
-    landscape.draw_landscape(height_map, [tileID], max_h)
-    glTranslated(length - 2.5, 0, 0)
-    landscape.draw_landscape(height_map, [tileID], max_h)
+    landscape.draw_landscape(height_map, [tileID, tile_grassID], max_h)
+    glTranslated(length - 1, 0, 0)
+    landscape.draw_landscape(height_map, [tileID, tile_grassID], max_h)
+    glTranslated(0, -length + 1, 0)
+    landscape.draw_landscape(height_map, [tileID, tile_grassID], max_h)
+    glTranslated(-length + 1, 0, 0)
+    landscape.draw_landscape(height_map, [tileID, tile_grassID], max_h)
+    glTranslated(-length + 1, 0, 0)
+    landscape.draw_landscape(height_map, [tileID, tile_grassID], max_h)
+    glTranslated(0, length - 1, 0)
+    landscape.draw_landscape(height_map, [tileID, tile_grassID], max_h)
+    glTranslated(0, length - 1, 0)
+    landscape.draw_landscape(height_map, [tileID, tile_grassID], max_h)
+    glTranslated(length - 1, 0, 0)
+    landscape.draw_landscape(height_map, [tileID, tile_grassID], max_h)
+    glTranslated(length - 1, 0, 0)
+    landscape.draw_landscape(height_map, [tileID, tile_grassID], max_h)
     glDisable(GL_TEXTURE_2D)
     glEndList()
 
@@ -95,7 +98,7 @@ def update_camera():
     camUP = Vector(0, 0, 1).cross(planeDIR).norm().cross(Vector(0, 0, 1).sub(planeDIR)).norm()
 
 def keyboard():
-    global planeDIR, planePOS, plane_angle_counter, plane_force_up, plane_force_fwd
+    global planeDIR, planePOS, plane_angle_counter, plane_force_up, plane_force_fwd, reached_max_h, fixed_force_up
 
     pygame.event.get()
     keys = pygame.key.get_pressed()
@@ -130,15 +133,25 @@ def keyboard():
             plane_force_fwd -= 0.25
 
     planePOS = planePOS.add(planeDIR.mult(plane_force_fwd/50))
-    zero_level = utils.getz(round(planePOS.x, 2), round(planePOS.y, 2), height_map)
-    planePOS.z = zero_level + plane_force_up + 2
+    zero_level = utils.getz(round(planePOS.x, 2), round(planePOS.y, 2), height_map) + 2
+    planePOS.z = zero_level + plane_force_up
+    if zero_level + plane_force_up > max_h:
+        if not reached_max_h:
+            reached_max_h = True
+            fixed_force_up = plane_force_up
+        planePOS.z = max_h + plane_force_up - fixed_force_up
+    else:
+        if reached_max_h:
+            reached_max_h = False
+            plane_force_up = fixed_force_up
+        planePOS.z = zero_level + plane_force_up
     update_camera()
 
     if keys[pygame.K_ESCAPE]:
         sys.exit(0)
 
 def draw(*args, **kwargs):
-    global angle_delta, last_time, current_time, delta_time
+    global angle_delta
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glMatrixMode(GL_MODELVIEW)
@@ -174,15 +187,12 @@ def draw(*args, **kwargs):
     glPopMatrix()
 
     glPushMatrix()
-    landscape_x = length*(trunc(planePOS.x)//length)
-    landscape_y = length*(trunc(planePOS.y)//length)
+    landscape_x = length*(planePOS.x//length)
+    landscape_y = length*(planePOS.y//length)
     glTranslated(landscape_x, landscape_y, 0)
     glCallList(landspace_model)
     glPopMatrix()
 
-    current_time = process_time()
-    delta_time = round((current_time - last_time)*70, 2)
-    last_time = current_time
     keyboard()
     glutSwapBuffers()
     glutPostRedisplay()
@@ -195,6 +205,5 @@ glutCreateWindow(b"Flying plane")
 glShadeModel(GL_FLAT)
 glutDisplayFunc(draw)
 glutKeyboardFunc(keyboardkeys)
-# glutSpecialFunc(keyboard)
 init()
 glutMainLoop()

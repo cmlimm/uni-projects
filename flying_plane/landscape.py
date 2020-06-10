@@ -3,6 +3,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from PIL import Image, ImageDraw
 import skybox
+from random import choice
 
 def height_map(filename, scale):
     """
@@ -14,9 +15,9 @@ def height_map(filename, scale):
     height = image.size[1]
     pix = image.load()
     array = [[0]*width for _ in range(height)]
-    for x in range(width)[:-1]:
+    for x in range(width):
         for y in range(height):
-            # darker areas are higher
+            # darker areas are lower
             array[x][y] = round(pix[x, y][0]*scale, 3)
     return array
 
@@ -29,11 +30,6 @@ def draw_landscape(height_map, ids, max_h):
         for x in range(1, m, 2):
             h = height_map[x][y]
             glColor3f(1, 1, 1)
-            if len(ids) != 1:
-                if h-45<=0.001 and 45-hprev<=0.001:
-                    glBindTexture(GL_TEXTURE_2D, ids[0])
-                elif 45-h<=0.001 and hprev-45<=0.001:
-                    glBindTexture(GL_TEXTURE_2D, ids[1])
             hprev = h
             glBegin(GL_TRIANGLE_FAN)
             glColor3f(0.95*h/max_h, 0.95*h/max_h, 0.95*h/max_h)

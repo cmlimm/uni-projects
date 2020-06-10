@@ -103,6 +103,8 @@ def getz(x, y, H):
 
     z = - (normal.x*x + normal.y*y + d)/normal.z
     z = round(z, 2)
+    # print("--------")
+    # print("x, y:", x, y)
     # print("z:", z)
     # print("--------")
     return z

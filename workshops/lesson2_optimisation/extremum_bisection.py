@@ -8,7 +8,7 @@ def d(func, x, h):
 def bisection(function, lower, upper, max_iter, precision):
     """
     Функция поиска экстремума методом бисекции, возвращает экстремум и значение в нем
-    function: функция в символьном виде
+    function: функция
     lower, upper: границы участка, на котором происходит поиск экстремума
     max_iter: целое число, максимум итераций
     precision: точность

@@ -4,7 +4,7 @@ def function(x):
 def golden_section(function, lower, upper, max_iter, precision):
     """
     Функция поиска экстремума методом золотого сечения, возвращает экстремум и значение в нем
-    function: функция в символьном виде
+    function: функция
     lower, upper: границы участка, на котором происходит поиск экстремума
     max_iter: целое число, максимум итераций
     precision: точность

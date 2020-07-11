@@ -3,7 +3,7 @@ def function(x):
 
 # производная
 def d(func, x, h):
-    return func(x + h)-func(x)
+    return (func(x + h)-func(x))/h
 
 def bisection(function, lower, upper, max_iter, precision):
     """

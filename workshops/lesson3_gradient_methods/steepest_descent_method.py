@@ -47,7 +47,7 @@ def func(x, y):
 def grad(func, x, y, h):
     return (dx(func, x, y, h), dy(func, x, y, h))
 
-def steepest_descent(function, initial, precision):
+def steepest_descent(function, initial, precision, dprecision):
     """
     Поиска минимума функции двух переменных методом наискорейшего спуска
 
@@ -61,7 +61,7 @@ def steepest_descent(function, initial, precision):
     y = initial[1]
 
     # инициализация начальных значений новых значений минимума
-    gradient = grad(function, x, y, 0.001)
+    gradient = grad(function, x, y, dprecision)
 
     # находим значение параметра eta такое, чтобы значение функции
     # в измененной точке было наименьшим
@@ -79,7 +79,7 @@ def steepest_descent(function, initial, precision):
         y = y_new
 
         # шаг алгоритма
-        gradient = grad(function, x, y, precision)
+        gradient = grad(function, x, y, dprecision)
 
         eta = golden_section(
                             lambda eta: func(x - eta*gradient[0], y - eta*gradient[1]),
@@ -93,7 +93,8 @@ def steepest_descent(function, initial, precision):
 
 initial = [0.7, 1.4]
 precision = 0.0000001
+dprecision = 0.001
 
 print("Минимум функции в точке ({0[0]:.4f}, {0[1]:.4f}): {1:.4f}\nКоличество шагов: {2}".format(
-    *steepest_descent(func, initial, precision)
+    *steepest_descent(func, initial, precision, dprecision)
 ))

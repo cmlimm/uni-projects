@@ -14,7 +14,7 @@ def func(x, y):
 def grad(func, x, y, h):
     return (dx(func, x, y, h), dy(func, x, y, h))
 
-def impulses_method(function, initial, precision, eta, gamma):
+def impulses_method(function, initial, precision, dprecision, eta, gamma):
     """
     Поиска минимума функции двух переменных методом импульсов
 
@@ -31,7 +31,7 @@ def impulses_method(function, initial, precision, eta, gamma):
     dir = [0, 0]
 
     # инициализация начальных значений новых значений минимума
-    gradient = grad(function, x, y, precision)
+    gradient = grad(function, x, y, dprecision)
     x_new = x - eta*gradient[0]
     y_new = y - eta*gradient[1]
 
@@ -41,7 +41,7 @@ def impulses_method(function, initial, precision, eta, gamma):
         y = y_new
 
         # шаг алгоритма
-        gradient = grad(function, x, y, 0.001)
+        gradient = grad(function, x, y, dprecision)
         dir[0] = gamma*dir[0] + eta*gradient[0]
         dir[1] = gamma*dir[1] + eta*gradient[1]
 
@@ -52,9 +52,10 @@ def impulses_method(function, initial, precision, eta, gamma):
 
 initial = [0.7, 1.4]
 precision = 0.0000001
+dprecision = 0.001
 eta = 0.01
 gamma = 0.9
 
 print("Минимум функции в точке ({0[0]:.4f}, {0[1]:.4f}): {1:.4f}\nКоличество шагов: {2}".format(
-    *impulses_method(func, initial, precision, eta, gamma)
+    *impulses_method(func, initial, precision, dprecision, eta, gamma)
 ))

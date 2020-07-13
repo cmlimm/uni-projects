@@ -15,3 +15,5 @@ Labs from university numberical methods course
 Labs and hometasks from university python course
 ### spbseu_rating
 University rating site parser integrated with discord bot
+### workshops
+University workshops from summer 2020

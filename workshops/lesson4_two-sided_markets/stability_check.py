@@ -1,24 +1,4 @@
-from random import sample
-
-def generate_priorities(men_n, women_n, quota):
-    """
-    Функция генерирует списки предпочтений для задачи марьяжа в следующем виде:
-    {игрок: {'priorities': предпочтения, 'quota': квота}, ...}
-
-    men_n: количество  мужчин
-    women_n: количество женщин
-    quota: квота
-    """
-
-    men_list = ['m'+str(i) for i in range(1, men_n + 1)]
-    women_list = ['w'+str(i) for i in range(1, women_n + 1)]
-
-    men_priorities = {man: {'priorities': sample(women_list, women_n),
-                            'quota': quota} for man in men_list}
-    women_priorities = {woman: {'priorities': sample(men_list, men_n),
-                                'quota': quota} for woman in women_list}
-
-    return (men_priorities, women_priorities)
+from priorities_generator import generate_priorities
 
 # функция для проверки приемлемости пары
 def is_acceptable(priorities, pair):
@@ -37,7 +17,7 @@ def is_acceptable(priorities, pair):
 def is_blocking(priorities, matching, pair):
     man = pair[0]
     woman = pair[1]
-
+    
     man_priorities = priorities[0][man]['priorities']
     woman_priorities = priorities[1][woman]['priorities']
 
@@ -82,14 +62,15 @@ def is_stable(priorities, matching):
 
     return (not_acceptable, blocking)
 
-priorities = generate_priorities(5, 5, 1)
+if __name__ == '__main__':
+    priorities = generate_priorities(5, 5, 1)
 
-for pr in priorities:
-    for person in pr:
-        print(person, pr[person])
-    print()
+    for pr in priorities:
+        for person in pr:
+            print(person, pr[person])
+        print()
 
-matching = [['m1','w1'], ['m2','w2'], ['m3','w3'], ['m4','w4'], ['m5','w5']]
-stable_check = is_stable(priorities, matching)
-print("Неприемлемые пары:", stable_check[0])
-print("Блокирующие пары:", stable_check[1])
+    matching = [['m1','w1'], ['m2','w2'], ['m3','w3'], ['m4','w4'], ['m5','w5']]
+    stable_check = is_stable(priorities, matching)
+    print("Неприемлемые пары:", stable_check[0])
+    print("Блокирующие пары:", stable_check[1])

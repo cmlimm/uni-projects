@@ -36,7 +36,7 @@ def is_blocking(priorities, matching, pair):
     return False
 
 
-def is_stable(priorities, matching):
+def blocking_pairs(priorities, matching):
     """
     Функция для проверки стабильности распределения
 
@@ -75,6 +75,6 @@ if __name__ == '__main__':
         print()
 
     matching = [['m1','w1'], ['m2','w2'], ['m3','w3'], ['m4','w4'], ['m5','w5']]
-    stable_check = is_stable(priorities, matching)
+    stable_check = blocking_pairs(priorities, matching)
     print("Неприемлемые пары:", stable_check[0])
     print("Блокирующие пары:", stable_check[1])

@@ -1,5 +1,6 @@
 from random import sample
 
+
 def generate_priorities(men_n, women_n, quota):
     """
     Функция генерирует списки предпочтений для задачи марьяжа в следующем виде:

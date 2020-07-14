@@ -1,6 +1,7 @@
 from stability_check import is_stable
 from priorities_generator import generate_priorities
 
+
 # функция для добавления новой пары в распределение
 def change_matching(matching, pair):
     man = pair[0]
@@ -60,6 +61,7 @@ def local_search(priorities, matching):
         blocking_pairs = is_stable(priorities, matching)[1]
 
     return matching
+
 
 priorities = generate_priorities(5, 5, 1)
 

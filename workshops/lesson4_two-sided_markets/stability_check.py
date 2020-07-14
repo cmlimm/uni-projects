@@ -1,5 +1,6 @@
 from priorities_generator import generate_priorities
 
+
 # функция для проверки приемлемости пары
 def is_acceptable(priorities, pair):
     man = pair[0]
@@ -13,11 +14,12 @@ def is_acceptable(priorities, pair):
 
     return True
 
+
 # функция проверяет, является ли пара блокирующей
 def is_blocking(priorities, matching, pair):
     man = pair[0]
     woman = pair[1]
-    
+
     man_priorities = priorities[0][man]['priorities']
     woman_priorities = priorities[1][woman]['priorities']
 
@@ -32,6 +34,7 @@ def is_blocking(priorities, matching, pair):
         return True
 
     return False
+
 
 def is_stable(priorities, matching):
     """
@@ -61,6 +64,7 @@ def is_stable(priorities, matching):
                         blocking.append([man, woman])
 
     return (not_acceptable, blocking)
+
 
 if __name__ == '__main__':
     priorities = generate_priorities(5, 5, 1)

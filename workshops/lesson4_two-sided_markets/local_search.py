@@ -1,10 +1,12 @@
 from stability_check import is_stable
 from priorities_generator import generate_priorities
 
+# функция для добавления новой пары в распределение
 def change_matching(matching, pair):
     man = pair[0]
     woman = pair[1]
 
+    # находим, с кем в паре состояли люди из новой пары
     for i in range(len(matching)):
         if man in matching[i]:
             man_matching_n = i
@@ -13,12 +15,14 @@ def change_matching(matching, pair):
             woman_matching_n = i
             woman_matching = matching[i][0]
 
+    # удаляем пары, в которых состояли люди из новой пары
     matching = matching[:man_matching_n] + matching[man_matching_n + 1:]
     if man_matching_n < woman_matching_n:
         matching = matching[:woman_matching_n - 1] + matching[woman_matching_n:]
     else:
         matching = matching[:woman_matching_n] + matching[woman_matching_n + 1:]
 
+    # добавляем новую пару и пару, составленную из "брошенных" людей
     matching.append(pair)
     matching.append([woman_matching, man_matching])
 

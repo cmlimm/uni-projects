@@ -72,9 +72,9 @@ def deferred_acceptance(priorities):
     matching = [[k,v] for k,v in men_choice.items()]
     return matching, (men_priorities, women_priorities)
 
-priorities = generate_priorities(5, 5, 1)
-
 if __name__ == '__main__':
+    priorities = generate_priorities(5, 5, 1)
+    
     print('Предпочтения:')
     for pr in priorities:
         for person in pr:

@@ -36,7 +36,7 @@ def choose_best(priorities, offers):
 
     return choice
 
-def deffered_acceptance(priorities):
+def deferred_acceptance(priorities):
     """
     Функция для нахождения стабильного распределения для задачи марьяжа
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':
             print(person, pr[person])
         print()
 
-    matching, shortlist = deffered_acceptance(priorities)
+    matching, shortlist = deferred_acceptance(priorities)
     print('Распределение:')
     print(matching)
     print('Шортлисты:')

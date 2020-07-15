@@ -1,4 +1,4 @@
-from stability_check import is_stable
+from stability_check import blocking_pairs
 from priorities_generator import generate_priorities
 
 
@@ -38,27 +38,27 @@ def local_search(priorities, matching):
     priorities: приоритеты сторон
     matching: начальное распределение
     """
-    blocking_pairs = is_stable(priorities, matching)[1]
+    blocking = blocking_pairs(priorities, matching)[1]
 
-    while blocking_pairs != []:
+    while blocking != []:
 
-        pair_new_matching = change_matching(matching, blocking_pairs[0])
-        pair_new_blocking = is_stable(priorities, pair_new_matching)[1]
+        pair_new_matching = change_matching(matching, blocking[0])
+        pair_new_blocking = blocking_pairs(priorities, pair_new_matching)[1]
         min_blocking = len(pair_new_blocking)
         min_matching = pair_new_matching
 
         # для каждой пары проверяем, сколько будем блокирующих пар после её смены
         # выбираем ту, после которой появится меньше всего блокирующих пар
-        for i in range(1, len(blocking_pairs)):
-            pair_new_matching = change_matching(matching, blocking_pairs[i])
-            pair_new_blocking = is_stable(priorities, pair_new_matching)[1]
+        for i in range(1, len(blocking)):
+            pair_new_matching = change_matching(matching, blocking[i])
+            pair_new_blocking = blocking_pairs(priorities, pair_new_matching)[1]
 
             if len(pair_new_blocking) <= min_blocking:
                 min_blocking = len(pair_new_blocking)
                 min_matching = pair_new_matching
 
         matching = min_matching
-        blocking_pairs = is_stable(priorities, matching)[1]
+        blocking = blocking_pairs(priorities, matching)[1]
 
     return matching
 

@@ -59,7 +59,7 @@ def deffered_acceptance(priorities):
         # для каждой женщины, которой поступило предложение
         for woman in women_choice:
             woman_pr = women_priorities[woman]['priorities']
-            # для каждого мужчины хуже тех, кого выбрали женщины
+            # для каждого мужчины хуже тех, кого выбрала женщина
             for man in woman_pr[woman_pr.index(women_choice[woman])+1:]:
                 man_pr = men_priorities[man]['priorities']
                 # удаляем женщину, которая в любом случае не выберет этого мужчину

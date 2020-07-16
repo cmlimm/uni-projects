@@ -16,6 +16,7 @@ def rotations(shortlists, matching):
     # список всех мужчин
     men = list(men_shortlists.keys())
     cycles = []
+    
     for man in men:
         current_man = man
         cur_priorities = men_shortlists[current_man]['priorities']
@@ -83,6 +84,9 @@ def all_stable_matchings(shortlists, matching):
     matchings = [matching.copy()]
     rots = rotations(shortlists, matching)
 
+    for rot in rots:
+        matching = perform_rotation(rot, matching)
+        matchings.append(matching)
     # while rots != []:
     #     submatching = matching
     #     for rot in rots:
@@ -92,7 +96,7 @@ def all_stable_matchings(shortlists, matching):
     #         matchings.append(matching)
     #     rots = rotations(shortlists, matching)
 
-    return rots
+    return (rots, matchings)
 
 if __name__ == '__main__':
     priorities = generate_priorities(5, 5, 1)
@@ -123,5 +127,7 @@ if __name__ == '__main__':
     not_acceptable, bl_pairs = blocking_pairs(priorities, matching)
     print("Неприемлемые пары:", not_acceptable)
     print("Блокирующие пары:", bl_pairs)
-    for matching in all_stable_matchings(shortlists, matching):
+    rots, matchings = all_stable_matchings(shortlists, matching)
+    print("Ротации:", rots)
+    for matching in matchings:
         print(matching)

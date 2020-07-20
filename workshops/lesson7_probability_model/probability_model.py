@@ -74,7 +74,7 @@ def remove_nested(sentences):
 def sentence_log_probability(sentence, dictionary):
     total = 1024908267229
     prob = 0
-    
+
     for word in sentence:
         if word in dictionary:
             prob += log(dictionary[word]/total)

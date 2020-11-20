@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+*.zip
+
 # C extensions
 *.so
 
@@ -129,10 +131,6 @@ dmypy.json
 .pyre/
 # Prerequisites
 *.d
-.ipynb_checkpoints
-=======
-# Prerequisites
-*.d
 
 # Object files
 *.o
@@ -184,5 +182,3 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-=======
->>>>>>> numerical_methods/master

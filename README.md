@@ -3,6 +3,7 @@
 ├── Mathematical-Modelling
 ├── Numerical-Methods
 ├── Python-Course
+│   ├── Computational-Geometry
 │   ├── Digital-Clock
 │   ├── Language-Processing
 │   ├── RSS-Telegram-Bot
